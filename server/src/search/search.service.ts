@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OAuth2Client } from 'google-auth-library';
 import { Connection, Message, PrivateChat, PublicChat, User } from 'src/entities';
 import { Repository } from 'typeorm';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 
 @Injectable()
 export class SearchService {
@@ -31,8 +30,7 @@ export class SearchService {
 
   async searchUserByToken(idToken: string) {
     const ticket = await this.client.verifyIdToken({
-      idToken,
-      audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
+      idToken, audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
     });
 
     return ticket.getPayload();
@@ -53,19 +51,23 @@ export class SearchService {
   }
 
   searchPrivateChat(id: string, hasMessages: boolean = !1) {
-    if (!this.isValidUUID(id)) throw new BadRequestException('ID inválido');
-    
-    return this.privateChatRepo.findOne({
-      where: { id }, relations: ['users', hasMessages ? 'messages' : undefined]
-    });
+    if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
+
+    const relations = ['users'];
+
+    hasMessages && relations.push('messages');
+
+    return this.privateChatRepo.findOne({ where: { id }, relations });
   }
 
   searchPublicChat(id: string, hasMessages: boolean = !1) {
-    if (!this.isValidUUID(id)) throw new BadRequestException('ID inválido');
-    
-    return this.publicChatRepo.findOne({
-      where: { id }, relations: ['owner', 'users', hasMessages ? 'messages' : undefined]
-    });
+    if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
+
+    const relations = ['owner', 'users'];
+
+    hasMessages && relations.push('messages');
+
+    return this.publicChatRepo.findOne({ where: { id }, relations });
   }
 
   searchPrivateChatsByUser(sub: string) {

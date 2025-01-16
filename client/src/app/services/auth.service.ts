@@ -5,13 +5,12 @@ import { Router } from '@angular/router';
 import { GooglePayload, GoogleUser } from '../types';
 import { Platform } from '@ionic/angular';
 import { io, Socket } from 'socket.io-client';
-import { APIService } from './api.service';
-
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService extends APIService {
+export class AuthService {
   public user?: GoogleUser;
 
   constructor(
@@ -19,8 +18,6 @@ export class AuthService extends APIService {
     private router: Router,
     private platform: Platform
   ) {
-    super();
-
     this.platform.ready().then(() => GoogleAuth.initialize({
       clientId: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
       scopes: ['profile', 'email'],
@@ -73,7 +70,7 @@ export class AuthService extends APIService {
 
     this.token = this.user.authentication.idToken;
 
-    this.http.post<GooglePayload>(`${this.API}/auth/login`, { token: this.token }).subscribe(({ exp }) => {
+    this.http.post<GooglePayload>(`${environment.api}/auth/login`, { token: this.token }).subscribe(({ exp }) => {
       this.expiration = exp;
 
       onConfirm && onConfirm();
@@ -85,7 +82,7 @@ export class AuthService extends APIService {
   }
 
   async logout() {
-    if (this.token) {
+    if (this.token) (async () => {
       if (this.user) this.user = await GoogleAuth.signOut();
 
       this.socket?.removeAllListeners();
@@ -93,7 +90,7 @@ export class AuthService extends APIService {
       this.socket?.disconnect();
 
       sessionStorage.removeItem("token");
-    };
+    })();
 
     this.router.navigate(['/login']);
   }
@@ -126,7 +123,7 @@ export class AuthService extends APIService {
     const expired = this.expiration - new Date().getTime() / 1e3;
 
     if (expired < 0) this.logout();
-    else this.socket = io(`${this.API}/socket`, { auth: { authorization: this.token } });
+    else this.socket = io(`${environment.api}/socket`, { auth: { authorization: this.token } });
   }
 
   socketEmitters = {}

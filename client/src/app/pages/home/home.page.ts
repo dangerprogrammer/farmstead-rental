@@ -1,4 +1,5 @@
 import { Component, Inject, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { ContextService } from 'src/app/services/context.service';
@@ -31,7 +32,8 @@ export class HomePage implements AuthSetup {
     @Inject('AUTH_SERVICE') private auth: AuthService,
     @Inject('SEARCH_SERVICE') private search: SearchService,
     @Inject('CONTEXT_SERVICE') private context: ContextService,
-    private authPage: AuthPage
+    private authPage: AuthPage,
+    private router: Router
   ) {
     this.authPage.setupConstructor(this, [
       { ev: 'self', listener: () => this.loadSelf() },
@@ -144,5 +146,9 @@ export class HomePage implements AuthSetup {
     const privateChat = { users: [this.self, user] };
 
     this.auth.socket.emit('create-private-chat', privateChat);
+
+    this.auth.socket.on('confirm-private-chat', ({ id }: PrivateChat) => 
+      setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 1e3)
+    );
   }
 }

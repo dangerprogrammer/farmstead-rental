@@ -12,6 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'chats/:id',
+    canActivate: [loginGuard],
     loadChildren: () => import('./chats/chats.module').then( m => m.ChatsPageModule)
   },
   {

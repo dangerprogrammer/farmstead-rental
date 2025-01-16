@@ -45,7 +45,7 @@ export class HomeHeaderComponent {
 
     await this.mainPopover.dismiss();
 
-    del(async () => await loading.dismiss());
+    del(() => loading.dismiss());
   }
 
   onSegmentChanged(event: CustomEvent) {

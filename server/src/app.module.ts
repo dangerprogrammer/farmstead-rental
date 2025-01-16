@@ -17,7 +17,7 @@ import { ChatService } from './chat/chat.service';
     ConfigModule.forRoot({ isGlobal: !0 }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
+      url: process.env.DATABASE_URL || 'postgresql://danger:123@localhost:5432/nestjs?schema=public',
       autoLoadEntities: !0,
       synchronize: !0
     }),

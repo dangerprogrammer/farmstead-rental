@@ -1,42 +1,40 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Connection, PrivateChat, PublicChat, User } from "../types";
-import { APIService } from "./api.service";
 import { Message } from "../types/message.type";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
-export class SearchService extends APIService {
+export class SearchService {
     constructor(
         private http: HttpClient
-    ) {
-        super();
-    }
+    ) {}
 
-    user = (sub: string) => this.http.get<User>(`${this.API}/search/user/${sub}`);
+    user = (sub: string) => this.http.get<User>(`${environment.api}/search/user/${sub}`);
 
-    userByToken = (token: string) => this.http.get<User>(`${this.API}/search/user-token/${token}`);
+    userByToken = (token: string) => this.http.get<User>(`${environment.api}/search/user-token/${token}`);
 
-    users = () => this.http.get<User[]>(`${this.API}/search/users`);
+    users = () => this.http.get<User[]>(`${environment.api}/search/users`);
 
-    connectionsBySub = (sub: string) => this.http.get<Connection[]>(`${this.API}/search/connections/${sub}`);
+    connectionsBySub = (sub: string) => this.http.get<Connection[]>(`${environment.api}/search/connections/${sub}`);
     
-    connections = () => this.http.get<Connection[]>(`${this.API}/search/connections`);
+    connections = () => this.http.get<Connection[]>(`${environment.api}/search/connections`);
 
-    privateChatsByUser = (sub: string) => this.http.get<PrivateChat[]>(`${this.API}/search/private-chats/${sub}`);
+    privateChatsByUser = (sub: string) => this.http.get<PrivateChat[]>(`${environment.api}/search/private-chats/${sub}`);
 
-    publicChatsByUser = (sub: string) => this.http.get<PublicChat[]>(`${this.API}/search/public-chats/${sub}`);
+    publicChatsByUser = (sub: string) => this.http.get<PublicChat[]>(`${environment.api}/search/public-chats/${sub}`);
 
-    privateChats = () => this.http.get<PrivateChat[]>(`${this.API}/search/private-chats`);
+    privateChats = () => this.http.get<PrivateChat[]>(`${environment.api}/search/private-chats`);
 
-    publicChats = () => this.http.get<PublicChat[]>(`${this.API}/search/public-chats`);
+    publicChats = () => this.http.get<PublicChat[]>(`${environment.api}/search/public-chats`);
 
-    messagesByChat = (id: string) => this.http.get<Message[]>(`${this.API}/search/messages/${id}`);
+    messagesByChat = (id: string) => this.http.get<Message[]>(`${environment.api}/search/messages/${id}`);
 
-    lastMessageChat = (id: string) => this.http.get<Message>(`${this.API}/search/messages/last/${id}`);
+    lastMessageChat = (id: string) => this.http.get<Message>(`${environment.api}/search/messages/last/${id}`);
 
-    privateChat = (id: string) => this.http.get<PrivateChat | undefined>(`${this.API}/search/private-chat/${id}`);
+    privateChat = (id: string) => this.http.get<PrivateChat | undefined>(`${environment.api}/search/private-chat/${id}`);
 
-    publicChat = (id: string) => this.http.get<PublicChat | undefined>(`${this.API}/search/public-chat/${id}`);
+    publicChat = (id: string) => this.http.get<PublicChat | undefined>(`${environment.api}/search/public-chat/${id}`);
 }

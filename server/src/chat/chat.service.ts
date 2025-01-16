@@ -26,7 +26,7 @@ export class ChatService {
 
         this.server.emit('update-private-chats', await this.search.searchPrivateChats());
 
-        return await this.search.searchPrivateChat(details.id);
+        return await this.search.searchPrivateChat(privateChat.id);
     }
 
     async createPublicChat(details: PublicChat) {

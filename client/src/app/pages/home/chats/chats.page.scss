@@ -1,13 +1,4 @@
 ion-header.title-header {
-    ion-toolbar {
-        --background: var(--ion-background-color);
-    }
-
-    ion-segment-button {
-        font-size: 1rem;
-        --color-checked: var(--ion-color-main);
-    }
-
     .back-button {
         display: flex;
         margin-right: 1em;
@@ -17,5 +8,26 @@ ion-header.title-header {
             height: 2.4rem;
             width: 2.4rem;
         }
+    }
+}
+
+ion-toolbar {
+    --background: var(--ion-background-color);
+}
+
+#main-spinner {
+    height: 4rem;
+    width: 4rem;
+}
+
+.flex-center {
+    gap: 1em;
+
+    ion-title {
+        flex: 0;
+    }
+
+    * {
+        text-align: center;
     }
 }

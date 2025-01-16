@@ -57,7 +57,9 @@
         <ion-toolbar color="transparent">
           <ion-title>Nova Conversa</ion-title>
           <ion-buttons slot="start">
-            <ion-back-button defaultHref="/home" (click)="forwardPrivateTalking()"></ion-back-button>
+            <ion-button (click)="forwardPrivateTalking()">
+              <ion-icon aria-hidden="true" slot="icon-only" ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+            </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
