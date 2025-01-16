@@ -1,0 +1,11 @@
+{
+  "name": "farmstead-rental",
+  "version": "1.0.0",
+  "description": "A project to contribute with my parents to management of farmstead rental",
+  "author": "Patrick",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "docker": "docker-compose up --build"
+  }
+}
