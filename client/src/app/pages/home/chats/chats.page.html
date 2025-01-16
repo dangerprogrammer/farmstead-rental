@@ -1,0 +1,36 @@
+<ion-header class="title-header" *ngIf="(privateChat || publicChat) as chat">
+  <ion-toolbar class="ion-color-main">
+    <ng-container *ngIf="privateChat">
+      <ng-container *ngIf="chat.users.length == 1 && (chat.users[0]) as user">
+        <ion-buttons slot="start">
+          <ion-button class="back-button" shape="round" (click)="backHome()">
+            <ion-icon aria-hidden="true" slot="start" ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+            <ion-avatar slot="end">
+              <img [src]="user.picture" referrerpolicy="no-referrer" class="back-image" />
+            </ion-avatar>
+          </ion-button>
+        </ion-buttons>
+
+        <div class="chat-header">
+          <ion-label>
+            <b>{{user.name}} (Você)</b>
+            <p>Você</p>
+          </ion-label>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="chat.users.length == 2 && (chat.users[1]) as user">
+        <ion-label><b>{{user.name}}</b>
+          <p>teste teste teste</p>
+        </ion-label>
+      </ng-container>
+    </ng-container>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title size="large">chats</ion-title>
+    </ion-toolbar>
+  </ion-header>
+</ion-content>

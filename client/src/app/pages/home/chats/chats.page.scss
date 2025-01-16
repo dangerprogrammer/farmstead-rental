@@ -1,0 +1,21 @@
+ion-header.title-header {
+    ion-toolbar {
+        --background: var(--ion-background-color);
+    }
+
+    ion-segment-button {
+        font-size: 1rem;
+        --color-checked: var(--ion-color-main);
+    }
+
+    .back-button {
+        display: flex;
+        margin-right: 1em;
+
+        ion-avatar {
+            flex-shrink: 0;
+            height: 2.4rem;
+            width: 2.4rem;
+        }
+    }
+}

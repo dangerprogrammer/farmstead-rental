@@ -1,0 +1,13 @@
+{
+  "name": "farmstead-rental",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "proxies": [
+    {
+      "path": "api",
+      "proxyUrl": "http://localhost:3000"
+    }
+  ]
+}

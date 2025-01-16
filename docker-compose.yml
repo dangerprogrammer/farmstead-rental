@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=danger
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=nestjs
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - DATABASE_URL=postgresql://danger:123@db:5432/nestjs?schema=public
+    ports:
+      - 3000
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "8100:8100"
+    networks:
+      - app-network
+    depends_on:
+      - server
+networks:
+  app-network:
+    driver: bridge
