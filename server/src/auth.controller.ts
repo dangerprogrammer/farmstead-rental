@@ -7,8 +7,8 @@ import { ChatService } from "./chat/chat.service";
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject('USER_SERVICE') private auth: UserService,
-    @Inject('CHAT_SERVICE') private chat: ChatService
+    @Inject(UserService) private auth: UserService,
+    @Inject(ChatService) private chat: ChatService
   ) { }
 
   @Public()

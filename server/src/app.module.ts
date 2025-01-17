@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
@@ -11,6 +11,9 @@ import { SearchService } from './search/search.service';
 import { UserService } from './user/user.service';
 import { ChatModule } from './chat/chat.module';
 import { ChatService } from './chat/chat.service';
+import { MessageService } from './message/message.service';
+import { MessageModule } from './message/message.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -21,23 +24,19 @@ import { ChatService } from './chat/chat.service';
       autoLoadEntities: !0,
       synchronize: !0
     }),
-    UserModule,
-    ConnectionModule,
-    ChatModule
+    forwardRef(() => SearchModule),
+    forwardRef(() => UserModule),
+    forwardRef(() => ConnectionModule),
+    forwardRef(() => ChatModule),
+    forwardRef(() => MessageModule)
   ],
-  providers: [AppGateway, {
-      provide: 'CONNECTION_SERVICE',
-      useClass: ConnectionService
-    }, {
-      provide: 'USER_SERVICE',
-      useClass: UserService
-    }, {
-      provide: 'CHAT_SERVICE',
-      useClass: ChatService
-    }, {
-      provide: 'SEARCH_SERVICE',
-      useClass: SearchService
-    },
+  providers: [
+    AppGateway,
+    ConnectionService,
+    UserService,
+    ChatService,
+    SearchService,
+    MessageService,
     { provide: APP_GUARD, useClass: GoogleGuard }
   ]
 })

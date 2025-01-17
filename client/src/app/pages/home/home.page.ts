@@ -143,12 +143,12 @@ export class HomePage implements AuthSetup {
   }
 
   startPrivateChat(user: User) {
-    const privateChat = { users: [this.self, user] };
+    const privateChat: Partial<PrivateChat> = { users: [this.self, user] };
 
     this.auth.socket.emit('create-private-chat', privateChat);
 
     this.auth.socket.on('confirm-private-chat', ({ id }: PrivateChat) => 
-      setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 1e3)
+      setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 5e2)
     );
   }
 }

@@ -1,111 +1,65 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { OAuth2Client } from 'google-auth-library';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { TokenPayload } from 'google-auth-library';
+import { ChatService } from 'src/chat/chat.service';
+import { ConnectionService } from 'src/connection/connection.service';
 import { Connection, Message, PrivateChat, PublicChat, User } from 'src/entities';
-import { Repository } from 'typeorm';
+import { MessageService } from 'src/message/message.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SearchService {
-  private client: OAuth2Client;
-
   constructor(
-    @InjectRepository(User) private readonly userRepo: Repository<User>,
-    @InjectRepository(Connection) private readonly connectionRepo: Repository<Connection>,
-    @InjectRepository(Message) private readonly messageRepo: Repository<Message>,
-    @InjectRepository(PrivateChat) private readonly privateChatRepo: Repository<PrivateChat>,
-    @InjectRepository(PublicChat) private readonly publicChatRepo: Repository<PublicChat>
+    @Inject(UserService) private readonly user: UserService,
+    @Inject(forwardRef(() => ConnectionService)) private readonly connect: ConnectionService,
+    @Inject(ChatService) private readonly chat: ChatService,
+    @Inject(MessageService) private readonly message: MessageService
   ) {
-    this.client = new OAuth2Client('51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com');
+    this.searchUser = this.user.searchUser;
+    this.searchUsers = this.user.searchUsers;
+
+    this.searchUserByToken = this.user.searchUserByToken;
+
+    this.searchConnectionsByUser = this.connect.searchConnectionsByUser;
+    this.searchConnection = this.connect.searchConnection;
+    this.searchConnections = this.connect.searchConnections;
+
+    this.searchPrivateChat = this.chat.searchPrivateChat;
+    this.searchPublicChat = this.chat.searchPublicChat;
+
+    this.searchPrivateChatsByUser = this.chat.searchPrivateChatsByUser;
+    this.searchPublicChatsByUser = this.chat.searchPublicChatsByUser;
+
+    this.searchPrivateChats = this.chat.searchPrivateChats;
+    this.searchPublicChats = this.chat.searchPublicChats;
+
+    this.searchAllChatMessages = this.message.searchAllChatMessages;
+    this.searchLastMessageChat = this.message.searchLastMessageChat;
   }
 
-  async searchUser(sub: string) {
-    const user = await this.userRepo.findOneBy({ sub });
+  searchUser: (sub: string) => Promise<User>;
+  searchUsers: () => Promise<User[]>;
 
-    return user;
-  }
+  searchUserByToken: (idToken: string) => Promise<TokenPayload>;
 
-  searchUsers() {
-    return this.userRepo.find();
-  }
+  searchConnectionsByUser: (sub: string) => Promise<Connection[]>;
 
-  async searchUserByToken(idToken: string) {
-    const ticket = await this.client.verifyIdToken({
-      idToken, audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
-    });
+  searchConnection: (socketId: string) => Promise<Connection>;
 
-    return ticket.getPayload();
-  }
+  searchConnections: () => Promise<Connection[]>;
 
-  searchConnectionsByUser(sub: string) {
-    return this.connectionRepo.find({
-      where: { user: { sub } }
-    });
-  }
+  searchPrivateChat: (id: string, hasMessages: boolean) => Promise<PrivateChat>;
 
-  searchConnection(socketId: string) {
-    return this.connectionRepo.find({ where: { socketId } });
-  }
+  searchPublicChat: (id: string, hasMessages: boolean) => Promise<PublicChat>;
 
-  searchConnections() {
-    return this.connectionRepo.find();
-  }
+  searchPrivateChatsByUser: (sub: string) => Promise<PrivateChat[]>;
 
-  searchPrivateChat(id: string, hasMessages: boolean = !1) {
-    if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
+  searchPublicChatsByUser: (sub: string) => Promise<PublicChat[]>;
 
-    const relations = ['users'];
+  searchPrivateChats: () => Promise<PrivateChat[]>;
 
-    hasMessages && relations.push('messages');
+  searchPublicChats: () => Promise<PublicChat[]>;
 
-    return this.privateChatRepo.findOne({ where: { id }, relations });
-  }
+  searchAllChatMessages: (id: string) => Promise<Message[]>;
 
-  searchPublicChat(id: string, hasMessages: boolean = !1) {
-    if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
-
-    const relations = ['owner', 'users'];
-
-    hasMessages && relations.push('messages');
-
-    return this.publicChatRepo.findOne({ where: { id }, relations });
-  }
-
-  searchPrivateChatsByUser(sub: string) {
-    return this.privateChatRepo.find({
-      where: { users: { sub } }, relations: ['users']
-    });
-  }
-
-  searchPublicChatsByUser(sub: string) {
-    return this.publicChatRepo.find({
-      where: { users: { sub } }, relations: ['owner', 'users']
-    });
-  }
-
-  searchPrivateChats() {
-    return this.privateChatRepo.find({ relations: ['users'] });
-  }
-
-  searchPublicChats() {
-    return this.publicChatRepo.find({ relations: ['owner', 'users'] });
-  }
-
-  searchAllChatMessages(id: string) {
-    return this.messageRepo.find({
-      where: [{ privateChat: { id } }, { publicChat: { id } }],
-      relations: ['owner']
-    });
-  }
-
-  searchLastMessageChat(id: string) {
-    return this.messageRepo.findOne({
-      where: [{ privateChat: { id } }, { publicChat: { id } }],
-      order: { createdAt: 'desc' }
-    });
-  }
-
-  private isValidUUID(uuid: string): boolean {
-    const regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-    return regex.test(uuid);
-  }
+  searchLastMessageChat: (id: string) => Promise<Message>;
 }

@@ -120,10 +120,7 @@ export class AuthService {
       this.socket.disconnect();
     };
 
-    const expired = this.expiration - new Date().getTime() / 1e3;
-
-    if (expired < 0) this.logout();
-    else this.socket = io(`${environment.api}/socket`, { auth: { authorization: this.token } });
+    this.socket = io(`${environment.api}/socket`, { auth: { authorization: this.token } });
   }
 
   socketEmitters = {}

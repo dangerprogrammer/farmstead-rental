@@ -15,6 +15,15 @@ ion-toolbar {
     --background: var(--ion-background-color);
 }
 
+ion-textarea {
+    --padding-top: 1em;
+    --padding-bottom: 1em;
+    --padding-start: 1em;
+    --padding-end: 1em;
+    --background: var(--ion-item-background);
+    --highlight-height: 0;
+}
+
 #main-spinner {
     height: 4rem;
     width: 4rem;

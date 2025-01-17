@@ -5,7 +5,7 @@ import { Public } from 'src/decorator/public.decorator';
 @Controller('search')
 export class SearchController {
     constructor(
-        @Inject('SEARCH_SERVICE') private search: SearchService,
+        @Inject(SearchService) private search: SearchService,
     ) {}
 
     @Public()

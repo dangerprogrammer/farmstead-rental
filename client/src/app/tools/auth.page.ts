@@ -15,7 +15,7 @@ type listenerType = constructorListener & {
 
 type page = {
   url: string;
-  initializationTool: () => void;
+  initializationTool(): void;
 };
 
 export interface AuthSetup extends page { };
@@ -31,8 +31,8 @@ export class AuthPage {
     @Inject('CONTEXT_SERVICE') private context: ContextService,
     private router: Router
   ) {
-    this.router.events.subscribe(() => {
-      if (this.router.url != "/login") this.initDefaultTool();
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd && event.url != "/login") this.initDefaultTool();
     });
   }
 
@@ -63,7 +63,7 @@ export class AuthPage {
   }
 
   private on = (ev: string, listener: (...args: any[]) => void) => {
-    this.listeners.push({ page: this.url!, ev, listener });
+    this.listeners.push({ page: this.url, ev, listener });
   }
 
   private async initDefaultTool() {
@@ -72,9 +72,13 @@ export class AuthPage {
 
     if (!hasToken || (authToken && authToken == this.auth.token)) return;
 
-    const { socket: oldSocket } = this.auth;
+    const { socket: oldSocket, expiration } = this.auth;
 
-    if (hasToken && (!oldSocket || !oldSocket.connected || (oldSocket.auth as any).authorization != this.auth.token)) await this.auth.setupSocket();
+    const expired = expiration - new Date().getTime() / 1e3;
+
+    if (expired < 0) await this.auth.logout();
+
+    if (hasToken && (!oldSocket || !oldSocket.connected || (oldSocket.auth as any).authorization != this.auth.token)) this.auth.setupSocket();
 
     const { socket } = this.auth;
 

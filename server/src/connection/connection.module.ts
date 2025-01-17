@@ -1,14 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConnectionService } from './connection.service';
-import { SearchService } from '../search/search.service';
+import { SearchModule } from 'src/search/search.module';
 
 @Module({
-  providers: [{
-    provide: 'CONNECTION_SERVICE',
-    useClass: ConnectionService
-  }, {
-    provide: 'SEARCH_SERVICE',
-    useClass: SearchService
-  }]
+  imports: [forwardRef(() => SearchModule)],
+  providers: [ConnectionService]
 })
 export class ConnectionModule {}

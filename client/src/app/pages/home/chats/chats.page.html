@@ -1,92 +1,66 @@
 <ng-container *ngIf="complete">
-  <ng-container *ngIf="!error">
-    <ion-header class="title-header" *ngIf="(privateChat || publicChat) as chat">
-      <ion-toolbar class="ion-color-main">
-        <ng-container *ngIf="privateChat">
-          <ng-container *ngIf="chat.users.length == 1 && (chat.users[0]) as user">
-            <ion-buttons slot="start">
-              <ion-button class="back-button" shape="round" (click)="backHome()">
-                <ion-icon aria-hidden="true" slot="start" ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
-                <ion-avatar slot="end">
-                  <img [src]="user.picture" referrerpolicy="no-referrer" class="back-image" />
-                </ion-avatar>
-              </ion-button>
-            </ion-buttons>
+  <ion-header class="title-header" *ngIf="(privateChat || publicChat) as chat">
+    <ion-toolbar class="ion-color-main">
+      <ng-container *ngIf="privateChat">
+        <ng-container *ngIf="chat.users.length == 1 && (chat.users[0]) as user">
+          <ion-buttons slot="start">
+            <ion-button class="back-button" shape="round" (click)="backHome()">
+              <ion-icon aria-hidden="true" slot="start" ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+              <ion-avatar slot="end">
+                <img [src]="user.picture" referrerpolicy="no-referrer" class="back-image" />
+              </ion-avatar>
+            </ion-button>
+          </ion-buttons>
 
-            <div class="chat-header">
-              <ion-label>
-                <b>{{user.name}} (Você)</b>
-                <p>Você</p>
-              </ion-label>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="chat.users.length == 2 && (chat.users[1]) as user">
-            <ion-label><b>{{user.name}}</b>
-              <p>teste teste teste</p>
+          <div class="chat-header">
+            <ion-label>
+              <b>{{user.name}} (Você)</b>
+              <p>Você</p>
             </ion-label>
-          </ng-container>
+          </div>
         </ng-container>
-      </ion-toolbar>
-    </ion-header>
+        <ng-container *ngIf="chat.users.length == 2 && (chat.users[1]) as user">
+          <ion-label><b>{{user.name}}</b>
+            <p>teste teste teste</p>
+          </ion-label>
+        </ng-container>
+      </ng-container>
+    </ion-toolbar>
+  </ion-header>
 
-    <ion-content [fullscreen]="true">
-      <ion-list>
-        <ion-item>Mensagem 1</ion-item>
-        <ion-item>Mensagem 2</ion-item>
-        <ion-item>Mensagem 3</ion-item>
-        <ion-item>Mensagem 4</ion-item>
-        <ion-item>Mensagem 5</ion-item>
-        <ion-item>Mensagem 6</ion-item>
-        <ion-item>Mensagem 7</ion-item>
-        <ion-item>Mensagem 8</ion-item>
-        <ion-item>Mensagem 9</ion-item>
-        <ion-item>Mensagem 10</ion-item>
-        <ion-item>Mensagem 11</ion-item>
-        <ion-item>Mensagem 12</ion-item>
-        <ion-item>Mensagem 13</ion-item>
-        <ion-item>Mensagem 14</ion-item>
-        <ion-item>Mensagem 15</ion-item>
-        <ion-item>Mensagem 16</ion-item>
-        <ion-item>Mensagem 17</ion-item>
-        <ion-item>Mensagem 18</ion-item>
-        <ion-item>Mensagem 19</ion-item>
-        <ion-item>Mensagem 20</ion-item>
-        <ion-item>Mensagem 21</ion-item>
-        <ion-item>Mensagem 22</ion-item>
-        <ion-item>Mensagem 23</ion-item>
-        <ion-item>Mensagem 24</ion-item>
-        <ion-item>Mensagem 25</ion-item>
-        <ion-item>Mensagem 26</ion-item>
-        <ion-item>Mensagem 27</ion-item>
-        <ion-item>Mensagem 28</ion-item>
-        <ion-item>Mensagem 29</ion-item>
-        <ion-item>Mensagem 30</ion-item>
-        <ion-item>Mensagem 31</ion-item>
-        <ion-item>Mensagem 32</ion-item>
-        <ion-item>Mensagem 33</ion-item>
-        <ion-item>Mensagem 34</ion-item>
-        <ion-item>Mensagem 35</ion-item>
-        <ion-item>Mensagem 36</ion-item>
-        <ion-item>Mensagem 37</ion-item>
-        <ion-item>Mensagem 38</ion-item>
-        <ion-item>Mensagem 39</ion-item>
-        <ion-item>Mensagem 40</ion-item>
-        <ion-item>Mensagem 41</ion-item>
-        <ion-item>Mensagem 42</ion-item>
-        <ion-item>Mensagem 43</ion-item>
-        <ion-item>Mensagem 44</ion-item>
-        <ion-item>Mensagem 45</ion-item>
-        <ion-item>Mensagem 46</ion-item>
-        <ion-item>Mensagem 47</ion-item>
-        <ion-item>Mensagem 48</ion-item>
-        <ion-item>Mensagem 49</ion-item>
-        <ion-item>Mensagem 50</ion-item>
-      </ion-list>
-    </ion-content>
-    <ion-footer>
-      <ion-toolbar>Enviar Mensagem</ion-toolbar>
-    </ion-footer>
-  </ng-container>
+  <ion-content [fullscreen]="true">
+    <ion-list>
+      <ion-item-group *ngFor="let message of messages">
+        <app-chat-message [message]="message" [self]="self"></app-chat-message>
+      </ion-item-group>
+      <ion-item>Mensagem 1</ion-item>
+      <ion-item>Mensagem 2</ion-item>
+      <ion-item>Mensagem 3</ion-item>
+      <ion-item>Mensagem 4</ion-item>
+      <ion-item>Mensagem 5</ion-item>
+      <ion-item>Mensagem 6</ion-item>
+      <ion-item>Mensagem 7</ion-item>
+      <ion-item>Mensagem 8</ion-item>
+      <ion-item>Mensagem 9</ion-item>
+      <ion-item>Mensagem 10</ion-item>
+      <ion-item>Mensagem 11</ion-item>
+      <ion-item>Mensagem 12</ion-item>
+      <ion-item>Mensagem 13</ion-item>
+      <ion-item>Mensagem 14</ion-item>
+      <ion-item>Mensagem 15</ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-footer>
+    <ion-toolbar>
+      <ion-textarea class="ion-margin-start" shape="round" slot="start" autoGrow rows="1" color="main"
+        placeholder="Enviar mensagem" (ionInput)="hasMessage($event)"></ion-textarea>
+      <ion-buttons slot="end">
+        <ion-fab-button size="small" color="main" (click)="sendMessage()" [disabled]="!enableSendMessage">
+          <ion-icon size="small" aria-hidden="true" ios="send-outline" md="send-sharp"></ion-icon>
+        </ion-fab-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-footer>
 </ng-container>
 <ng-container *ngIf="error">
   <ion-content [fullscreen]="true">

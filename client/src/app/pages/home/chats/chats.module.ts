@@ -9,6 +9,7 @@ import { ChatsPageRoutingModule } from './chats-routing.module';
 import { ChatsPage } from './chats.page';
 import { ModalModule } from "src/app/components/modals/modal.module";
 import { HomeHeaderModule } from 'src/app/components/home-header/home-header.module';
+import { ChatMessageComponent } from 'src/app/components/chat-message/chat-message.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,6 @@ import { HomeHeaderModule } from 'src/app/components/home-header/home-header.mod
     ModalModule,
     HomeHeaderModule
 ],
-  declarations: [ChatsPage]
+  declarations: [ChatsPage, ChatMessageComponent]
 })
 export class ChatsPageModule {}

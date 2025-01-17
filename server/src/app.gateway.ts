@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { forwardRef, Inject } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { ConnectionService } from "./connection/connection.service";
@@ -11,9 +11,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
     constructor(
-        @Inject('CONNECTION_SERVICE') private connect: ConnectionService,
-        @Inject('USER_SERVICE') private user: UserService,
-        @Inject('SEARCH_SERVICE') private search: SearchService
+        @Inject(forwardRef(() => ConnectionService)) private connect: ConnectionService,
+        @Inject(forwardRef(() => UserService)) private user: UserService,
+        @Inject(forwardRef(() => SearchService)) private search: SearchService
     ) {
         this.user.setServer(this.server);
         this.connect.setServer(this.server);

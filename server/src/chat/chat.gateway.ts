@@ -9,7 +9,7 @@ export class ChatGateway {
   @WebSocketServer() server: Server;
 
   constructor(
-    @Inject('CHAT_SERVICE') private chat: ChatService
+    @Inject(ChatService) private chat: ChatService
   ) {
     this.chat.setServer(this.server);
   }

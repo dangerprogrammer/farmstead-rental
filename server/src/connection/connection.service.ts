@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Connection } from "src/entities";
 import { Repository } from "typeorm";
@@ -11,7 +11,7 @@ export class ConnectionService {
 
     constructor(
         @InjectRepository(Connection) private readonly connectionRepo: Repository<Connection>,
-        @Inject('SEARCH_SERVICE') private readonly search: SearchService
+        @Inject(forwardRef(() => SearchService)) private readonly search: SearchService
     ) { }
 
     setServer(server: Server) {
@@ -25,7 +25,7 @@ export class ConnectionService {
 
         this.server.emit('update-users', await this.search.searchUsers());
 
-        return await this.search.searchConnection(details.socketId);
+        return await this.searchConnection(details.socketId);
     }
 
     async deleteBySocketId(socketId: string) {
@@ -38,7 +38,17 @@ export class ConnectionService {
         await this.connectionRepo.createQueryBuilder().delete().execute();
     }
 
-    findAll() {
+    searchConnectionsByUser(sub: string) {
+        return this.connectionRepo.find({
+            where: { user: { sub } }
+        });
+    }
+
+    searchConnection(socketId: string) {
+        return this.connectionRepo.findOne({ where: { socketId } });
+    }
+
+    searchConnections() {
         return this.connectionRepo.find();
     }
 }
