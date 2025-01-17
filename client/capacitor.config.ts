@@ -3,11 +3,6 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
   appName: 'farmstead-rental',
-  webDir: 'www',
-  server: {
-    cleartext: !0,
-    allowNavigation: ['*']
-  },
   plugins: {
     GoogleAuth: {
       scopes: ['profile', 'email'],

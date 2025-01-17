@@ -10,10 +10,10 @@ import { MessageModule } from 'src/message/message.module';
 @Module({
   imports: [
     EntityModule,
-    forwardRef(() => UserModule),
     forwardRef(() => ConnectionModule),
-    forwardRef(() => ChatModule),
-    forwardRef(() => MessageModule)
+    UserModule,
+    ChatModule,
+    MessageModule
   ],
   providers: [SearchService],
   controllers: [SearchController],

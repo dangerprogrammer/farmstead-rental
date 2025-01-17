@@ -4,6 +4,7 @@ import { SearchModule } from 'src/search/search.module';
 
 @Module({
   imports: [forwardRef(() => SearchModule)],
-  providers: [ConnectionService]
+  providers: [ConnectionService],
+  exports: [ConnectionService]
 })
 export class ConnectionModule {}

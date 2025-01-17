@@ -5,17 +5,17 @@ import { PrivateChat, PublicChat } from "./entities";
 import { ChatService } from "./chat/chat.service";
 
 @Controller('auth')
-export class AuthController {
+export class AppController {
   constructor(
-    @Inject(UserService) private auth: UserService,
-    @Inject(ChatService) private chat: ChatService
+    @Inject(UserService) private readonly user: UserService,
+    @Inject(ChatService) private readonly chat: ChatService
   ) { }
 
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.ACCEPTED)
   handleLogin(@Body() { token }: { token: string }) {
-    return this.auth.login(token);
+    return this.user.login(token);
   }
 
   @Post('create-private-chat')

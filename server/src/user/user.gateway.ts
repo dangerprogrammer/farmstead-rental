@@ -10,9 +10,9 @@ export class UserGateway {
   @WebSocketServer() server: Server;
 
   constructor(
-    @Inject(UserService) private user: UserService,
-    @Inject(ConnectionService) private connect: ConnectionService,
-    @Inject(SearchService) private search: SearchService
+    @Inject(UserService) private readonly user: UserService,
+    @Inject(ConnectionService) private readonly connect: ConnectionService,
+    @Inject(SearchService) private readonly search: SearchService
   ) {
     this.user.setServer(this.server);
     this.connect.setServer(this.server);

@@ -9,25 +9,24 @@ import { UserService } from 'src/user/user.service';
 @Injectable()
 export class SearchService {
   constructor(
-    @Inject(UserService) private readonly user: UserService,
     @Inject(forwardRef(() => ConnectionService)) private readonly connect: ConnectionService,
+    @Inject(UserService) private readonly user: UserService,
     @Inject(ChatService) private readonly chat: ChatService,
     @Inject(MessageService) private readonly message: MessageService
   ) {
-    this.searchUser = this.user.searchUser;
-    this.searchUsers = this.user.searchUsers;
-
-    this.searchUserByToken = this.user.searchUserByToken;
-
     this.searchConnectionsByUser = this.connect.searchConnectionsByUser;
     this.searchConnection = this.connect.searchConnection;
     this.searchConnections = this.connect.searchConnections;
 
-    this.searchPrivateChat = this.chat.searchPrivateChat;
-    this.searchPublicChat = this.chat.searchPublicChat;
+    this.searchUser = this.user.searchUser;
+    this.searchUserByToken = this.user.searchUserByToken;
+    this.searchUsers = this.user.searchUsers;
 
     this.searchPrivateChatsByUser = this.chat.searchPrivateChatsByUser;
     this.searchPublicChatsByUser = this.chat.searchPublicChatsByUser;
+
+    this.searchPrivateChat = this.chat.searchPrivateChat;
+    this.searchPublicChat = this.chat.searchPublicChat;
 
     this.searchPrivateChats = this.chat.searchPrivateChats;
     this.searchPublicChats = this.chat.searchPublicChats;
@@ -36,24 +35,25 @@ export class SearchService {
     this.searchLastMessageChat = this.message.searchLastMessageChat;
   }
 
-  searchUser: (sub: string) => Promise<User>;
-  searchUsers: () => Promise<User[]>;
-
-  searchUserByToken: (idToken: string) => Promise<TokenPayload>;
-
   searchConnectionsByUser: (sub: string) => Promise<Connection[]>;
 
   searchConnection: (socketId: string) => Promise<Connection>;
 
   searchConnections: () => Promise<Connection[]>;
 
-  searchPrivateChat: (id: string, hasMessages: boolean) => Promise<PrivateChat>;
+  searchUser: (sub: string) => Promise<User>;
 
-  searchPublicChat: (id: string, hasMessages: boolean) => Promise<PublicChat>;
+  searchUserByToken: (idToken: string) => Promise<TokenPayload>;
+
+  searchUsers: () => Promise<User[]>;
 
   searchPrivateChatsByUser: (sub: string) => Promise<PrivateChat[]>;
 
   searchPublicChatsByUser: (sub: string) => Promise<PublicChat[]>;
+
+  searchPrivateChat: (id: string, hasMessages: boolean) => Promise<PrivateChat>;
+
+  searchPublicChat: (id: string, hasMessages: boolean) => Promise<PublicChat>;
 
   searchPrivateChats: () => Promise<PrivateChat[]>;
 

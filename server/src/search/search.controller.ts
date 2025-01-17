@@ -9,6 +9,18 @@ export class SearchController {
     ) {}
 
     @Public()
+    @Get('connections/:sub')
+    getConnectionsBySub(@Param('sub') sub: string) {
+        return this.search.searchConnectionsByUser(sub);
+    }
+
+    @Public()
+    @Get('connections')
+    getConnections() {
+        return this.search.searchConnections();
+    }
+
+    @Public()
     @Get('user/:sub')
     getUser(@Param('sub') sub: string) {
         return this.search.searchUser(sub);
@@ -27,18 +39,6 @@ export class SearchController {
     }
 
     @Public()
-    @Get('connections/:sub')
-    getConnectionsBySub(@Param('sub') sub: string) {
-        return this.search.searchConnectionsByUser(sub);
-    }
-
-    @Public()
-    @Get('connections')
-    getConnections() {
-        return this.search.searchConnections();
-    }
-
-    @Public()
     @Get('private-chats/:sub')
     getPrivateChatsBySub(@Param('sub') sub: string) {
         return this.search.searchPrivateChatsByUser(sub);
@@ -48,6 +48,18 @@ export class SearchController {
     @Get('public-chats/:sub')
     getPublicChatsBySub(@Param('sub') sub: string) {
         return this.search.searchPublicChatsByUser(sub);
+    }
+
+    @Public()
+    @Get('private-chat/:id')
+    getPrivateChat(@Param('id') id: string) {
+        return this.search.searchPrivateChat(id, !0);
+    }
+
+    @Public()
+    @Get('public-chat/:id')
+    getPublicChat(@Param('id') id: string) {
+        return this.search.searchPublicChat(id, !0);
     }
 
     @Public()
@@ -72,17 +84,5 @@ export class SearchController {
     @Get('messages/last/:id')
     getLastMessages(@Param('id') id: string) {
         return this.search.searchLastMessageChat(id);
-    }
-
-    @Public()
-    @Get('private-chat/:id')
-    getPrivateChat(@Param('id') id: string) {
-        return this.search.searchPrivateChat(id, !0);
-    }
-
-    @Public()
-    @Get('public-chat/:id')
-    getPublicChat(@Param('id') id: string) {
-        return this.search.searchPublicChat(id, !0);
     }
 }

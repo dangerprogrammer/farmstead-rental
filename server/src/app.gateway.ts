@@ -11,9 +11,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
     constructor(
-        @Inject(forwardRef(() => ConnectionService)) private connect: ConnectionService,
-        @Inject(forwardRef(() => UserService)) private user: UserService,
-        @Inject(forwardRef(() => SearchService)) private search: SearchService
+        @Inject(ConnectionService) private connect: ConnectionService,
+        @Inject(UserService) private user: UserService,
+        @Inject(SearchService) private search: SearchService
     ) {
         this.user.setServer(this.server);
         this.connect.setServer(this.server);
