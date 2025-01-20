@@ -1,9 +1,10 @@
 import { MessageService } from "./message.service";
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MessageGateway } from "./message.gateway";
+import { SearchModule } from "src/search/search.module";
 
 @Module({
-  imports: [],
+  imports: [forwardRef(() => SearchModule)],
   providers: [MessageGateway, MessageService],
   exports: [MessageService]
 })

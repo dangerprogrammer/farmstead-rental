@@ -5,6 +5,7 @@
     <ion-segment-content id="calendar">Calendário</ion-segment-content>
 
     <ion-segment-content id="chats">
+      <!-- <div>Self:{{self | json}}</div> -->
       <ng-container *ngIf="self">
         <div class="flex-center" *ngIf="!selfPrivateChats">
           <ion-spinner name="crescent" id="main-spinner"></ion-spinner>

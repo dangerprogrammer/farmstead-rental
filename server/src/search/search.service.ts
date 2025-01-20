@@ -13,53 +13,33 @@ export class SearchService {
     @Inject(UserService) private readonly user: UserService,
     @Inject(ChatService) private readonly chat: ChatService,
     @Inject(MessageService) private readonly message: MessageService
-  ) {
-    this.searchConnectionsByUser = this.connect.searchConnectionsByUser;
-    this.searchConnection = this.connect.searchConnection;
-    this.searchConnections = this.connect.searchConnections;
+  ) {}
 
-    this.searchUser = this.user.searchUser;
-    this.searchUserByToken = this.user.searchUserByToken;
-    this.searchUsers = this.user.searchUsers;
+  searchConnectionsByUser = (sub: string) => this.connect.searchConnectionsByUser(sub);
 
-    this.searchPrivateChatsByUser = this.chat.searchPrivateChatsByUser;
-    this.searchPublicChatsByUser = this.chat.searchPublicChatsByUser;
+  searchConnection = (socketId: string) => this.connect.searchConnection(socketId);
 
-    this.searchPrivateChat = this.chat.searchPrivateChat;
-    this.searchPublicChat = this.chat.searchPublicChat;
+  searchConnections = () => this.connect.searchConnections();
 
-    this.searchPrivateChats = this.chat.searchPrivateChats;
-    this.searchPublicChats = this.chat.searchPublicChats;
+  searchUser = (sub: string) => this.user.searchUser(sub);
 
-    this.searchAllChatMessages = this.message.searchAllChatMessages;
-    this.searchLastMessageChat = this.message.searchLastMessageChat;
-  }
+  searchUserByToken = (idToken: string) => this.user.searchUserByToken(idToken);
 
-  searchConnectionsByUser: (sub: string) => Promise<Connection[]>;
+  searchUsers = () => this.user.searchUsers();
 
-  searchConnection: (socketId: string) => Promise<Connection>;
+  searchPrivateChatsByUser = (sub: string) => this.chat.searchPrivateChatsByUser(sub);
 
-  searchConnections: () => Promise<Connection[]>;
+  searchPublicChatsByUser = (sub: string) => this.chat.searchPublicChatsByUser(sub);
 
-  searchUser: (sub: string) => Promise<User>;
+  searchPrivateChat = (id: string, hasMessages: boolean) => this.chat.searchPrivateChat(id, hasMessages);
 
-  searchUserByToken: (idToken: string) => Promise<TokenPayload>;
+  searchPublicChat = (id: string, hasMessages: boolean) => this.chat.searchPublicChat(id, hasMessages);
 
-  searchUsers: () => Promise<User[]>;
+  searchPrivateChats = () => this.chat.searchPrivateChats();
 
-  searchPrivateChatsByUser: (sub: string) => Promise<PrivateChat[]>;
+  searchPublicChats = () => this.chat.searchPublicChats();
 
-  searchPublicChatsByUser: (sub: string) => Promise<PublicChat[]>;
+  searchAllChatMessages = (id: string) => this.message.searchAllChatMessages(id);
 
-  searchPrivateChat: (id: string, hasMessages: boolean) => Promise<PrivateChat>;
-
-  searchPublicChat: (id: string, hasMessages: boolean) => Promise<PublicChat>;
-
-  searchPrivateChats: () => Promise<PrivateChat[]>;
-
-  searchPublicChats: () => Promise<PublicChat[]>;
-
-  searchAllChatMessages: (id: string) => Promise<Message[]>;
-
-  searchLastMessageChat: (id: string) => Promise<Message>;
+  searchLastMessageChat = (id: string) => this.message.searchLastMessageChat(id);
 }

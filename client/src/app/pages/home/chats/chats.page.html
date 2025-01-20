@@ -1,4 +1,8 @@
-<ng-container *ngIf="complete">
+<!-- <div>Self: {{self | json}}</div>
+<div>Complete: {{complete | json}}</div>
+<div>Error: {{error | json}}</div>
+<ion-back-button defaultHref="/home"></ion-back-button> -->
+<ng-container *ngIf="complete && self">
   <ion-header class="title-header" *ngIf="(privateChat || publicChat) as chat">
     <ion-toolbar class="ion-color-main">
       <ng-container *ngIf="privateChat">
@@ -50,9 +54,10 @@
       <ion-item>Mensagem 15</ion-item>
     </ion-list>
   </ion-content>
+
   <ion-footer>
     <ion-toolbar>
-      <ion-textarea class="ion-margin-start" shape="round" slot="start" autoGrow rows="1" color="main"
+      <ion-textarea #textarea class="ion-margin-start" shape="round" slot="start" autoGrow rows="1" color="main"
         placeholder="Enviar mensagem" (ionInput)="hasMessage($event)"></ion-textarea>
       <ion-buttons slot="end">
         <ion-fab-button size="small" color="main" (click)="sendMessage()" [disabled]="!enableSendMessage">

@@ -13,6 +13,8 @@ export class MessageService {
     const message = this.messageRepo.create(details);
 
     await this.messageRepo.save(message);
+
+    return await this.searchMessage(message.id);
   }
 
   searchAllChatMessages(id: string) {
@@ -27,5 +29,9 @@ export class MessageService {
       where: [{ privateChat: { id } }, { publicChat: { id } }],
       order: { createdAt: 'desc' }
     });
+  }
+
+  searchMessage(id: number) {
+    return this.messageRepo.findOne({ where: { id } });
   }
 }

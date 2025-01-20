@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TextareaChangeEventDetail } from '@ionic/angular';
+import { IonTextarea } from '@ionic/angular';
 import { IonTextareaCustomEvent } from '@ionic/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ContextService } from 'src/app/services/context.service';
@@ -14,6 +14,8 @@ import { Message, PrivateChat, PublicChat, User } from 'src/app/types';
   styleUrls: ['./chats.page.scss'],
 })
 export class ChatsPage implements AuthSetup {
+  @ViewChild('textarea') textarea!: IonTextarea;
+
   privateChat?: PrivateChat;
   publicChat?: PublicChat;
 
@@ -43,7 +45,6 @@ export class ChatsPage implements AuthSetup {
     this.url = `/home/chats/${id}`;
 
     this.authPage.setupConstructor(this, [
-      { ev: 'self', listener: () => this.loadSelf() },
     ]);
   }
 
@@ -54,13 +55,13 @@ export class ChatsPage implements AuthSetup {
   }
 
   loadSelf() {
-    const self = this.context.getData<User | undefined>('self');
+    this.search.userByToken(this.auth.token).subscribe(self => {
+      if (self) {
+        this.authPage.defListeners.updateSelf(self);
 
-    if (self) {
-      this.authPage.defListeners.updateSelf(self);
-
-      this.self = this.context.getData<User>('self');
-    }
+        this.self = this.context.getData<User>('self');
+      };
+    });
   }
 
   backHome() {
@@ -96,7 +97,9 @@ export class ChatsPage implements AuthSetup {
   }
 
   hasMessage({ detail: { value } }: IonTextareaCustomEvent<any>) {
-    this.enableSendMessage = !!value.trim().length;
+    value = value.trim();
+
+    this.enableSendMessage = !!value.length;
     this.messageContent = value;
   }
 
@@ -107,10 +110,17 @@ export class ChatsPage implements AuthSetup {
       ...(this.publicChat ? { publicChat: this.publicChat } : {})
     };
 
-    this.auth.socket.emit('create-message', details);
+    console.log(this.textarea.value);
 
-    this.auth.socket.on('receive-message', (message: Message) =>
-      console.log(message)
-    );
+    this.textarea.value = '';
+
+    this.enableSendMessage = !1;
+    this.messageContent = '';
+
+    // this.auth.socket.emit('create-message', details);
+
+    // this.auth.socket.on('receive-message', (message: Message) =>
+    //   console.log(message)
+    // );
   }
 }

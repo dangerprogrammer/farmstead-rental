@@ -35,14 +35,6 @@ export class AuthService {
     sessionStorage.setItem("token", token);
   }
 
-  get code() {
-    return sessionStorage.getItem("code")!;
-  }
-
-  set code(code: string) {
-    sessionStorage.setItem("code", code);
-  }
-
   get expiration() {
     return Number(sessionStorage.getItem("expiration")!);
   }
@@ -90,6 +82,7 @@ export class AuthService {
       this.socket?.disconnect();
 
       sessionStorage.removeItem("token");
+      sessionStorage.removeItem("expiration");
     })();
 
     this.router.navigate(['/login']);
