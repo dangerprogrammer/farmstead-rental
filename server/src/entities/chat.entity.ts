@@ -1,6 +1,5 @@
 import { Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
-import { User } from "./user.entity";
-import { Message } from "./message.entity";
+import { User, Message } from ".";
 
 @Entity({ name: 'chats' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })

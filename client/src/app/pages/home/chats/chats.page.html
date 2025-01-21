@@ -1,7 +1,3 @@
-<!-- <div>Self: {{self | json}}</div>
-<div>Complete: {{complete | json}}</div>
-<div>Error: {{error | json}}</div>
-<ion-back-button defaultHref="/home"></ion-back-button> -->
 <ng-container *ngIf="complete && self">
   <ion-header class="title-header" *ngIf="(privateChat || publicChat) as chat">
     <ion-toolbar class="ion-color-main">
@@ -23,6 +19,7 @@
             </ion-label>
           </div>
         </ng-container>
+
         <ng-container *ngIf="chat.users.length == 2 && (chat.users[1]) as user">
           <ion-label><b>{{user.name}}</b>
             <p>teste teste teste</p>
@@ -33,26 +30,22 @@
   </ion-header>
 
   <ion-content [fullscreen]="true">
-    <ion-list>
-      <ion-item-group *ngFor="let message of messages">
-        <app-chat-message [message]="message" [self]="self"></app-chat-message>
-      </ion-item-group>
-      <ion-item>Mensagem 1</ion-item>
-      <ion-item>Mensagem 2</ion-item>
-      <ion-item>Mensagem 3</ion-item>
-      <ion-item>Mensagem 4</ion-item>
-      <ion-item>Mensagem 5</ion-item>
-      <ion-item>Mensagem 6</ion-item>
-      <ion-item>Mensagem 7</ion-item>
-      <ion-item>Mensagem 8</ion-item>
-      <ion-item>Mensagem 9</ion-item>
-      <ion-item>Mensagem 10</ion-item>
-      <ion-item>Mensagem 11</ion-item>
-      <ion-item>Mensagem 12</ion-item>
-      <ion-item>Mensagem 13</ion-item>
-      <ion-item>Mensagem 14</ion-item>
-      <ion-item>Mensagem 15</ion-item>
-    </ion-list>
+    <div class="flex-center" *ngIf="!messages">
+      <ion-spinner name="crescent" id="main-spinner"></ion-spinner>
+      <ion-title><b>Carregando Mensagens</b></ion-title>
+    </div>
+
+    <ng-container *ngIf="messages && getAllMessages() as allMessages">
+      <ion-list *ngIf="allMessages.length">
+        <ion-item-group *ngFor="let message of allMessages">
+          <app-chat-message [message]="message" [self]="self"></app-chat-message>
+        </ion-item-group>
+      </ion-list>
+
+      <div class="flex-center" *ngIf="!allMessages.length">
+        <ion-title><b>Ainda não há nenhuma mensagem!</b></ion-title>
+      </div>
+    </ng-container>
   </ion-content>
 
   <ion-footer>

@@ -1,9 +1,12 @@
 <ion-item lines="none" *ngIf="(message.owner.sub == self.sub) as myself" [class]="myself ? 'self' : 'user'">
   <ion-label [slot]="myself ? 'end' : 'start'" class="ion-text-wrap">
     <ion-text>{{message.content}}</ion-text>
-    <ion-note>
+    <ion-note *ngIf="isMessage(message)">
       <small>{{message.createdAt | date: 'HH:mm'}}</small>
-      <ion-icon [color]="myself ? 'primary' : 'primary'" aria-hidden="true" ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
+      <ion-icon *ngIf="myself" color="primary" aria-hidden="true" ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
+    </ion-note>
+    <ion-note *ngIf="!isMessage(message)">
+      <small>{{message.sendAt | date: 'HH:mm'}}</small>
     </ion-note>
   </ion-label>
 </ion-item>

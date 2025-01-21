@@ -20,7 +20,7 @@ export class MessageService {
   searchAllChatMessages(id: string) {
     return this.messageRepo.find({
       where: [{ privateChat: { id } }, { publicChat: { id } }],
-      relations: ['owner']
+      relations: ['owner', 'visualizedBy']
     });
   }
 

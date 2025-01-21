@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Message, User } from 'src/app/types';
+import { Message, PendingMessage, User } from 'src/app/types';
 
 @Component({
   selector: 'app-chat-message',
@@ -8,5 +8,9 @@ import { Message, User } from 'src/app/types';
 })
 export class ChatMessageComponent {
   @Input() self!: User;
-  @Input() message!: Message;
+  @Input() message!: Message | PendingMessage;
+
+  isMessage(message: any): message is Message {
+    return 'id' in message;
+  }
 }

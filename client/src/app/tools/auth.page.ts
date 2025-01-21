@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { AuthService } from "../services/auth.service";
-import { Connection, PrivateChat, PublicChat, User } from "../types";
+import { Connection, Message, PrivateChat, PublicChat, User } from "../types";
 import { ContextService } from "../services/context.service";
 
 type constructorListener = {
@@ -15,10 +15,7 @@ type listenerType = constructorListener & {
 
 type page = {
   url: string;
-  initializationTool(): void;
 };
-
-export interface AuthSetup extends page { };
 
 @Injectable()
 export class AuthPage {
@@ -39,9 +36,9 @@ export class AuthPage {
   public setupConstructor = (page: page, listeners?: constructorListener[]) => {
     const { url } = page, pageContext = this.context.getData(url);
 
-    this[pageContext ? 'update' : 'setup'](page);
-
     if (pageContext) return;
+
+    this.setup(page);
 
     listeners?.forEach(({ ev, listener }) => this.on(ev, listener));
   }
@@ -52,14 +49,6 @@ export class AuthPage {
     this.context.setData(url, page);
 
     this.pages.push(page);
-
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd && event.url == url) this.searchPage(url).initializationTool();
-    });
-  }
-
-  private update({ url, initializationTool }: page) {
-    this.searchPage(url).initializationTool = initializationTool;
   }
 
   private on = (ev: string, listener: (...args: any[]) => void) => {
@@ -104,6 +93,10 @@ export class AuthPage {
       this.defListeners.updateSelf(user);
 
       // this.auth.logSocket('user self', user);
+    });
+
+    socket.on('update-messages-chat', ({ chatId, messages }: { chatId: string, messages: Message[] }) => {
+      this.defListeners.updateChatMessages({ chatId, messages });
     });
 
     this.listeners.forEach(({ ev, listener }) => {
@@ -152,14 +145,14 @@ export class AuthPage {
       if (self) publicChats = publicChats.filter(({ users }) => users.find(({ sub }) => sub == self.sub));
 
       this.context.setData('public-chats', publicChats);
+    },
+
+    updateChatMessages: ({ chatId, messages }: { chatId: string, messages: Message[] }) => {
+      this.context.setData(`chat-${chatId}-messages`, messages);
     }
   };
 
   private sortUsers = (a: User, b: User) => a.name > b.name ? 1 : a.name < b.name ? -1 : a.email > b.email ? 1 : a.email < b.email ? -1 : 0;
 
   private reduceUsers = (order: User[], u: User, self: User) => u.sub == self.sub ? [u, ...order] : [...order, u];
-
-  private searchPage = (url: string) => {
-    return this.pages.find(page => page.url == url)!;
-  }
 }

@@ -1,8 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { TokenPayload } from 'google-auth-library';
 import { ChatService } from 'src/chat/chat.service';
 import { ConnectionService } from 'src/connection/connection.service';
-import { Connection, Message, PrivateChat, PublicChat, User } from 'src/entities';
 import { MessageService } from 'src/message/message.service';
 import { UserService } from 'src/user/user.service';
 

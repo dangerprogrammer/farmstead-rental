@@ -28,6 +28,6 @@ export class MessageGateway {
 
     this.server.to(socket.id).emit('message-sent', message);
 
-    for (const { socketId } of connections) this.server.to(socketId).emit('update-messages', chatMessages);
+    for (const { socketId } of connections) this.server.to(socketId).emit('update-messages-chat', { chatId: id, messages: chatMessages });
   }
 }

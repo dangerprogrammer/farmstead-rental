@@ -1,6 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
-import { Connection } from "./connection.entity";
-import { PrivateChat, PublicChat } from "./chat.entity";
+import { Connection, PrivateChat, PublicChat } from ".";
 
 @Entity({ name: 'users' })
 export class User {

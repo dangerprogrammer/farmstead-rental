@@ -1,6 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
-import { PrivateChat, PublicChat } from "./chat.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User, PrivateChat, PublicChat } from ".";
 
 @Entity({ name: 'messages' })
 export class Message {
@@ -13,8 +12,15 @@ export class Message {
     @Column(() => User)
     owner: User;
 
+    @Column()
+    sendAt: Date;
+
     @CreateDateColumn()
     createdAt: Date;
+
+    @ManyToMany(() => User)
+    @JoinTable()
+    visualizedBy: User[];
 
     @ManyToOne(() => PrivateChat, ({ messages }) => messages, { nullable: !0 })
     privateChat?: PrivateChat;

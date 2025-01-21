@@ -4,7 +4,7 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { ContextService } from 'src/app/services/context.service';
 import { SearchService } from 'src/app/services/search.service';
-import { AuthPage, AuthSetup } from 'src/app/tools/auth.page';
+import { AuthPage } from 'src/app/tools/auth.page';
 import { PrivateChat, PublicChat, User } from 'src/app/types';
 
 @Component({
@@ -12,7 +12,7 @@ import { PrivateChat, PublicChat, User } from 'src/app/types';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage implements AuthSetup {
+export class HomePage {
   @ViewChild('newPrivateChatModal') newPrivateChatModal!: ModalController;
   @ViewChild('mainPopover') mainPopover!: PopoverController;
   @ViewChild('newPopover') newPopover!: PopoverController;
@@ -38,8 +38,19 @@ export class HomePage implements AuthSetup {
     this.authPage.setupConstructor(this, [
       { ev: 'update-users', listener: () => this.loadUsers() },
       { ev: 'update-private-chats', listener: () => this.loadPrivateChats() },
-      { ev: 'update-public-chats', listener: () => this.loadPublicChats() }
+      { ev: 'update-public-chats', listener: () => this.loadPublicChats() },
+      { ev: 'confirm-private-chat', listener: ({ id }: PrivateChat) => setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 5e2) }
     ]);
+  }
+
+  ionViewWillEnter() {
+    this.loadSelf();
+
+    this.loadUsers();
+
+    this.loadPrivateChats();
+
+    this.loadPublicChats();
   }
 
   loadUsers() {
@@ -50,35 +61,39 @@ export class HomePage implements AuthSetup {
         users = this.context.getData('users');
 
         this.users = users;
+
+        this.loadSelf();
       };
     });
   }
 
   loadSelf() {
-    this.search.userByToken(this.auth.token).subscribe(self => {
-      if (self) {
-        this.authPage.defListeners.updateSelf(self);
-  
+    this.search.userByToken(this.auth.token).subscribe(googleSelf =>
+      this.search.user(googleSelf.sub).subscribe(self => {
+        if (self) {
+          this.authPage.defListeners.updateSelf(self);
+
           this.self = this.context.getData<User>('self');
-    
+
           const privateChats = this.context.getData<PrivateChat[] | undefined>('private-chats');
-    
+
           if (privateChats) this.selfPrivateChats = privateChats;
-    
+
           const publicChats = this.context.getData<PublicChat[] | undefined>('public-chats');
-    
+
           if (publicChats) this.selfPublicChats = publicChats;
-    
+
           const users = this.context.getData<User[] | undefined>('users');
-    
+
           if (users) {
             this.users = users;
             this.privateUsers = users;
-    
+
             if (privateChats) this.privateUsers = this.filterPrivateUsers(users, privateChats);
           };
-      };
-    });
+        };
+      })
+    );
   }
 
   loadPrivateChats() {
@@ -118,16 +133,6 @@ export class HomePage implements AuthSetup {
     });
   }
 
-  initializationTool() {
-    this.loadSelf();
-
-    this.loadUsers();
-
-    this.loadPrivateChats();
-
-    this.loadPublicChats();
-  }
-
   newPrivateChat() {
     this.openNewPrivateChat = !0;
   }
@@ -142,12 +147,8 @@ export class HomePage implements AuthSetup {
   }
 
   startPrivateChat(user: User) {
-    const privateChat: Partial<PrivateChat> = { users: [this.self, user] };
+    const privateChat: Partial<PrivateChat> = { users: [this.self!, user] };
 
     this.auth.socket.emit('create-private-chat', privateChat);
-
-    this.auth.socket.on('confirm-private-chat', ({ id }: PrivateChat) => 
-      setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 5e2)
-    );
   }
 }
