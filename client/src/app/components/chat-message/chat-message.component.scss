@@ -1,0 +1,13 @@
+ion-item {
+    --min-height: 0;
+    --background: #f003;
+
+    ion-label {
+        background: blue;
+        margin: 0;
+
+        ion-text {
+            word-break: break-word;
+        }
+    }
+}

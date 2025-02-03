@@ -19,11 +19,9 @@ export class User {
     connections: Connection[];
 
     @ManyToMany(() => PrivateChat, ({ users }) => users)
-    @JoinTable()
     privateChats: PrivateChat[];
 
     @ManyToMany(() => PublicChat, ({ users }) => users)
-    @JoinTable()
     publicChats: PublicChat[];
 
     @OneToMany(() => PublicChat, ({ owner }) => owner)

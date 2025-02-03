@@ -51,7 +51,7 @@
   <ion-footer>
     <ion-toolbar>
       <ion-textarea #textarea class="ion-margin-start" shape="round" slot="start" autoGrow rows="1" color="main"
-        placeholder="Enviar mensagem" (ionInput)="hasMessage($event)"></ion-textarea>
+        placeholder="Enviar mensagem" (ionInput)="hasMessage($event)" autofocus></ion-textarea>
       <ion-buttons slot="end">
         <ion-fab-button size="small" color="main" (click)="sendMessage()" [disabled]="!enableSendMessage">
           <ion-icon size="small" aria-hidden="true" ios="send-outline" md="send-sharp"></ion-icon>

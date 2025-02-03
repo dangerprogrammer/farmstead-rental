@@ -47,11 +47,10 @@ export class ChatsPage {
 
     this.authPage.setupConstructor(this, [
       {
-        ev: 'message-sent', listener: (message: Message) => {
-          const pendingMessage = this.pendingMessages.find(pMessage => message.sendAt == pMessage.sendAt)
-
-          console.log('delete pending message:', pendingMessage);
-        }
+        ev: 'message-sent', listener: (message: Message) => this.onMessageSent(message)
+      },
+      {
+        ev: 'update-messages-chat', listener: ({ chatId: chId }: { chatId: string }) => this.updateMessages(chId)
       }
     ]);
   }
@@ -84,18 +83,26 @@ export class ChatsPage {
     this.search.privateChat(chatId).subscribe({
       error: () => this.error = !0,
       next: privateChat => this.privateChat = privateChat,
-      complete: () => this.onCompleteLoad(chatId)
+      complete: () => this.onCompleteLoad()
     });
 
     this.search.publicChat(chatId).subscribe({
       error: () => this.error = !0,
       next: publicChat => this.publicChat = publicChat,
-      complete: () => this.onCompleteLoad(chatId)
+      complete: () => this.onCompleteLoad()
     });
   }
 
-  private onCompleteLoad(chatId: string) {
-    this.complete = !0;
+  onMessageSent(message: Message) {
+    const pendingIndex = this.pendingMessages.findIndex(pMessage => (message.sendAt as any as string) == pMessage.sendAt.toISOString())
+
+    this.pendingMessages.splice(pendingIndex, 1);
+  }
+
+  updateMessages(chId?: string) {
+    const chatId = this.route.snapshot.paramMap.get('id')!;
+
+    if (chId && chId != chatId) return;
 
     this.search.messagesByChat(chatId).subscribe(messages => {
       if (messages) {
@@ -106,6 +113,12 @@ export class ChatsPage {
         this.messages = messages;
       };
     });
+  }
+
+  private onCompleteLoad() {
+    this.complete = !0;
+
+    this.updateMessages();
   }
 
   hasMessage({ detail: { value } }: IonTextareaCustomEvent<any>) {
@@ -132,9 +145,9 @@ export class ChatsPage {
     this.enableSendMessage = !1;
     this.messageContent = '';
 
-    this.pendingMessages.push(details);
+    this.textarea.setFocus();
 
-    console.log(this.pendingMessages);
+    this.pendingMessages.push(details);
 
     this.auth.socket.emit('create-message', details);
   }

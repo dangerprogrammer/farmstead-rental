@@ -1,4 +1,4 @@
-import { Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
+import { Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 import { User, Message } from ".";
 
 @Entity({ name: 'chats' })
@@ -11,6 +11,7 @@ abstract class Chat {
 @Entity({ name: 'private-chats' })
 export class PrivateChat extends Chat {
     @ManyToMany(() => User, ({ privateChats }) => privateChats)
+    @JoinTable()
     users: User[];
 
     @OneToMany(() => Message, ({ privateChat }) => privateChat)
@@ -20,6 +21,7 @@ export class PrivateChat extends Chat {
 @Entity({ name: 'public-chats' })
 export class PublicChat extends Chat {
     @ManyToMany(() => User, ({ publicChats }) => publicChats)
+    @JoinTable()
     users: User[];
 
     @OneToMany(() => Message, ({ publicChat }) => publicChat)
