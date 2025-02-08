@@ -1,13 +1,33 @@
 ion-item {
     --min-height: 0;
-    --background: #f003;
+    --background: transparent;
+
+    &.self {
+        ion-label {
+            background: var(--ion-color-light);
+        }
+    }
 
     ion-label {
-        background: blue;
-        margin: 0;
+        padding: .25em .65em;
+        margin: .15em 0;
+        max-width: 90%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: flex-end;
+        border-radius: .5em;
+        gap: 0 .5em;
 
         ion-text {
+            flex-shrink: 1;
             word-break: break-word;
+        }
+
+        ion-note {
+            display: flex;
+            gap: .2em;
+            pointer-events: none;
         }
     }
 }

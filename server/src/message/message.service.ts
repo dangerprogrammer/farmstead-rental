@@ -27,7 +27,8 @@ export class MessageService {
   searchLastMessageChat(id: string) {
     return this.messageRepo.findOne({
       where: [{ privateChat: { id } }, { publicChat: { id } }],
-      order: { createdAt: 'desc' }
+      order: { createdAt: 'desc' },
+      relations: ['owner', 'visualizedBy']
     });
   }
 

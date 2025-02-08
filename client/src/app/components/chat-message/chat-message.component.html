@@ -3,10 +3,11 @@
     <ion-text>{{message.content}}</ion-text>
     <ion-note *ngIf="isMessage(message)">
       <small>{{message.createdAt | date: 'HH:mm'}}</small>
-      <ion-icon *ngIf="myself" color="primary" aria-hidden="true" ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
+      <ion-icon *ngIf="myself && (chat.users.length) as users" [color]="message.visualizedBy.length == users - 1 ? 'primary' : 'medium'" aria-hidden="true" ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
     </ion-note>
     <ion-note *ngIf="!isMessage(message)">
       <small>{{message.sendAt | date: 'HH:mm'}}</small>
+      <ion-icon *ngIf="myself" aria-hidden="true" ios="time-outline" md="time-sharp"></ion-icon>
     </ion-note>
   </ion-label>
 </ion-item>

@@ -82,10 +82,14 @@ export class UserService extends PassportSerializer {
     }
 
     async searchUserByToken(idToken: string) {
-        const ticket = await this.client.verifyIdToken({
-          idToken, audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
-        });
-    
-        return ticket.getPayload();
+        try {
+            const ticket = await this.client.verifyIdToken({
+              idToken, audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
+            });
+        
+            return ticket.getPayload();
+        } catch (error) {
+            return error;
+        }
       }
 }

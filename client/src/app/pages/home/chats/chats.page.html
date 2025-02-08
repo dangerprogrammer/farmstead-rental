@@ -1,5 +1,5 @@
-<ng-container *ngIf="complete && self">
-  <ion-header class="title-header" *ngIf="(privateChat || publicChat) as chat">
+<ng-container *ngIf="complete && self && (privateChat || publicChat) as chat">
+  <ion-header class="title-header">
     <ion-toolbar class="ion-color-main">
       <ng-container *ngIf="privateChat">
         <ng-container *ngIf="chat.users.length == 1 && (chat.users[0]) as user">
@@ -38,7 +38,7 @@
     <ng-container *ngIf="messages && getAllMessages() as allMessages">
       <ion-list *ngIf="allMessages.length">
         <ion-item-group *ngFor="let message of allMessages">
-          <app-chat-message [message]="message" [self]="self"></app-chat-message>
+          <app-chat-message [chat]="chat" [message]="message" [self]="self"></app-chat-message>
         </ion-item-group>
       </ion-list>
 

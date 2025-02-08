@@ -26,11 +26,7 @@ export class UserItemComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.privateChat) this.search.lastMessageChat(this.privateChat.id).subscribe(lastMessage => {
-      if (lastMessage) {
-        this.message = lastMessage;
-
-        console.log('message', lastMessage);
-      };
+      if (lastMessage) this.message = lastMessage;
     });
   }
 
