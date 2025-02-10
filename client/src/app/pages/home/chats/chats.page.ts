@@ -68,6 +68,8 @@ export class ChatsPage {
           this.authPage.defListeners.updateSelf(self);
 
           this.self = this.context.getData<User>('self');
+
+          // AQUI VISUALIZAR TODAS AS MENSAGENS DO CHAT!!!
         };
       })
     );
@@ -111,6 +113,8 @@ export class ChatsPage {
         messages = this.context.getData(`chat-${chatId}-messages`);
 
         this.messages = messages;
+
+        console.log(messages);
       };
     });
   }
@@ -135,7 +139,7 @@ export class ChatsPage {
   sendMessage() {
     const details: PendingMessage = {
       content: this.messageContent, owner: this.self, sendAt: new Date(),
-      visualizedBy: [],
+      visualizedBy: [this.self],
       ...(this.privateChat ? { privateChat: this.privateChat } : {}),
       ...(this.publicChat ? { publicChat: this.publicChat } : {})
     };

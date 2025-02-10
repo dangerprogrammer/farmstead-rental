@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "src/entities";
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 
 @Injectable()
 export class MessageService {
@@ -29,6 +29,22 @@ export class MessageService {
       where: [{ privateChat: { id } }, { publicChat: { id } }],
       order: { createdAt: 'desc' },
       relations: ['owner', 'visualizedBy']
+    });
+  }
+
+  countUnreadByUser(id: string, sub: string) {
+    return this.messageRepo.count({
+      where: [
+        {
+          privateChat: { id },
+          visualizedBy: { sub: Not(sub) }
+        },
+        {
+          publicChat: { id },
+          visualizedBy: { sub: Not(sub) }
+        }
+      ],
+      relations: ['visualizedBy']
     });
   }
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Query } from '@nestjs/common';
 import { SearchService } from './search.service';
 import { Public } from 'src/decorator/public.decorator';
 
@@ -9,8 +9,8 @@ export class SearchController {
     ) {}
 
     @Public()
-    @Get('connections/:sub')
-    getConnectionsBySub(@Param('sub') sub: string) {
+    @Get('connections')
+    getConnectionsBySub(@Query('sub') sub: string) {
         return this.search.searchConnectionsByUser(sub);
     }
 
@@ -21,15 +21,9 @@ export class SearchController {
     }
 
     @Public()
-    @Get('user/:sub')
-    getUser(@Param('sub') sub: string) {
-        return this.search.searchUser(sub);
-    }
-
-    @Public()
-    @Get('user-token/:token')
-    getUserByToken(@Param('token') token: string) {
-        return this.search.searchUserByToken(token);
+    @Get('user')
+    getUser(@Query('sub') sub?: string, @Query('token') token?: string) {
+        return sub ? this.search.searchUser(sub) : this.search.searchUserByToken(token);
     }
 
     @Public()
@@ -39,26 +33,26 @@ export class SearchController {
     }
 
     @Public()
-    @Get('private-chats/:sub')
-    getPrivateChatsBySub(@Param('sub') sub: string) {
+    @Get('private-chats/user')
+    getPrivateChatsBySub(@Query('sub') sub: string) {
         return this.search.searchPrivateChatsByUser(sub);
     }
 
     @Public()
-    @Get('public-chats/:sub')
-    getPublicChatsBySub(@Param('sub') sub: string) {
+    @Get('public-chats/user')
+    getPublicChatsBySub(@Query('sub') sub: string) {
         return this.search.searchPublicChatsByUser(sub);
     }
 
     @Public()
-    @Get('private-chat/:id')
-    getPrivateChat(@Param('id') id: string) {
+    @Get('private-chat')
+    getPrivateChat(@Query('id') id: string) {
         return this.search.searchPrivateChat(id, !0);
     }
 
     @Public()
-    @Get('public-chat/:id')
-    getPublicChat(@Param('id') id: string) {
+    @Get('public-chat')
+    getPublicChat(@Query('id') id: string) {
         return this.search.searchPublicChat(id, !0);
     }
 
@@ -75,14 +69,20 @@ export class SearchController {
     }
 
     @Public()
-    @Get('messages/:id')
-    getAllMessages(@Param('id') id: string) {
+    @Get('messages')
+    getAllMessages(@Query('id') id: string) {
         return this.search.searchAllChatMessages(id);
     }
 
     @Public()
-    @Get('messages/last/:id')
+    @Get('messages/:id/last')
     getLastMessages(@Param('id') id: string) {
         return this.search.searchLastMessageChat(id);
+    }
+
+    @Public()
+    @Get('unread-messages/:sub')
+    getUnreadMessagesByUser(@Param('sub') sub: string, @Query('id') id: string) {
+        return this.search.countUnreadByUser(id, sub);
     }
 }

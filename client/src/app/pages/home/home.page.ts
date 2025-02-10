@@ -77,7 +77,15 @@ export class HomePage {
 
           const privateChats = this.context.getData<PrivateChat[] | undefined>('private-chats');
 
-          if (privateChats) this.selfPrivateChats = privateChats;
+          if (privateChats) {
+            this.selfPrivateChats = privateChats;
+
+            privateChats.forEach(({ id, users }) => users.forEach(({ email, sub }) =>
+              this.search.unreadMessagesByUser(id, sub).subscribe(total => {
+                console.log(`Mensagens não lidas por ${email}`, total);
+              })
+            ));
+          };
 
           const publicChats = this.context.getData<PublicChat[] | undefined>('public-chats');
 

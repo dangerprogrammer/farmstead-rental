@@ -40,4 +40,6 @@ export class SearchService {
   searchAllChatMessages = (id: string) => this.message.searchAllChatMessages(id);
 
   searchLastMessageChat = (id: string) => this.message.searchLastMessageChat(id);
+
+  countUnreadByUser = (id: string, sub: string) => this.message.countUnreadByUser(id, sub);
 }
