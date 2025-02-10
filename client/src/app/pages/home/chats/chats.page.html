@@ -20,10 +20,22 @@
           </div>
         </ng-container>
 
-        <ng-container *ngIf="chat.users.length == 2 && (chat.users[1]) as user">
-          <ion-label><b>{{user.name}}</b>
-            <p>teste teste teste</p>
-          </ion-label>
+        <ng-container *ngIf="chat.users.length == 2 && (chat.users[0].sub == self.sub ? chat.users[1] : chat.users[0]) as user">
+          <ion-buttons slot="start">
+            <ion-button class="back-button" shape="round" (click)="backHome()">
+              <ion-icon aria-hidden="true" slot="start" ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+              <ion-avatar slot="end">
+                <img [src]="user.picture" referrerpolicy="no-referrer" class="back-image" />
+              </ion-avatar>
+            </ion-button>
+          </ion-buttons>
+
+          <div class="chat-header">
+            <ion-label>
+              <b>{{user.name}}</b>
+              <p>teste teste teste</p>
+            </ion-label>
+          </div>
         </ng-container>
       </ng-container>
     </ion-toolbar>

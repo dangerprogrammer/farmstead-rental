@@ -4,6 +4,16 @@ ion-item {
 
     &.self {
         ion-label {
+            background: color-mix(in srgb, var(--ion-color-main) 50%, var(--ion-color-light) 50%);
+
+            ion-note {
+                color: #bbb;
+            }
+        }
+    }
+    
+    &.user {
+        ion-label {
             background: var(--ion-color-light);
         }
     }
@@ -18,6 +28,8 @@ ion-item {
         justify-content: flex-end;
         border-radius: .5em;
         gap: 0 .5em;
+        width: auto;
+        flex: 0 1 auto;
 
         ion-text {
             flex-shrink: 1;
