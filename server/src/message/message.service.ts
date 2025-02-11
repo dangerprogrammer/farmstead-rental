@@ -47,18 +47,21 @@ export class MessageService {
 
   async countUnreadByUser(id: string, sub: string) {
     const user = await this.search.searchUser(sub);
-    const count = await this.messageRepo
-    .createQueryBuilder('message')
-    .leftJoin('message.visualizedBy', 'user')
-    .where('(message.privateChatId = :chatId OR message.publicChatId = :chatId)', { chatId: id })
-    .andWhere(
-      `message.id NOT IN (
-        SELECT mvb.message_id FROM message_visualized_by mvb WHERE mvb.user_sub = :sub
-      )`,
-      { sub: sub }
-    )
-    .getCount();
+    const count = await this.messageRepo.count({
+      where: [
+        {
+          privateChat: { id },
+          visualizedBy: { sub: Not(sub) }
+        },
+        {
+          publicChat: { id },
+          visualizedBy: { sub: Not(sub) }
+        }
+      ],
+      relations: ['visualizedBy']
+    });
 
+    // PRECISO DESCOBRIR COMO CONTAR AS NÃO VISUALIZADAS!!!!
     console.log(`O user "${user.email}" tem ${count} mensagens não lidas!`);
 
     return count;

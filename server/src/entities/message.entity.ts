@@ -19,11 +19,7 @@ export class Message {
     createdAt: Date;
 
     @ManyToMany(() => User)
-    @JoinTable({
-        name: 'message_visualized_by',
-        joinColumn: { name: 'message_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'user_sub', referencedColumnName: 'sub' }
-    })
+    @JoinTable()
     visualizedBy: User[];
 
     @ManyToOne(() => PrivateChat, ({ messages }) => messages, { nullable: !0 })
