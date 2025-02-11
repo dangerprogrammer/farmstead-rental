@@ -62,6 +62,8 @@ export class ChatsPage {
   }
 
   loadSelf() {
+    const chatId = this.route.snapshot.paramMap.get('id')!;
+
     this.search.userByToken(this.auth.token).subscribe(googleSelf =>
       this.search.user(googleSelf.sub).subscribe(self => {
         if (self) {
@@ -69,7 +71,7 @@ export class ChatsPage {
 
           this.self = this.context.getData<User>('self');
 
-          // AQUI VISUALIZAR TODAS AS MENSAGENS DO CHAT!!!
+          this.auth.socket.emit('visualize-message', { sub: self.sub, chatId });
         };
       })
     );

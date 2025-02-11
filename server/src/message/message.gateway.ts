@@ -30,4 +30,14 @@ export class MessageGateway {
 
     for (const { socketId } of connections) this.server.to(socketId).emit('update-messages-chat', { chatId: id, messages: chatMessages });
   }
+
+  @SubscribeMessage('visualize-message')
+  async visualizeMessage(_socket: Socket, { sub, chatId }: { sub: string, chatId: string }) {
+    const connections = await this.search.searchConnectionsByUser(sub);
+    const messages = await this.search.searchAllChatMessages(chatId);
+
+    const chatMessages = await Promise.all(messages.map(async ({ id }) => await this.message.updateMessageVisualized(id, sub)));
+
+    for (const { socketId } of connections) this.server.to(socketId).emit('update-messages-chat', { chatId, messages: chatMessages });
+  }
 }

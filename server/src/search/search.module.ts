@@ -13,7 +13,7 @@ import { MessageModule } from 'src/message/message.module';
     forwardRef(() => ConnectionModule),
     UserModule,
     ChatModule,
-    MessageModule
+    forwardRef(() => MessageModule)
   ],
   providers: [SearchService],
   controllers: [SearchController],
