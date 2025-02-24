@@ -20,7 +20,7 @@ export class MessageService {
   }
 
   async updateMessageVisualized(id: number, sub: string) {
-    const message = await this.messageRepo.findOne({ where: { id }, relations: ['visualizedBy'] });
+    const message = await this.messageRepo.findOne({ where: { id }, relations: { visualizedBy: !0 } });
     const user = await this.search.searchUser(sub);
 
     message.visualizedBy = [...message.visualizedBy, user];
@@ -33,7 +33,10 @@ export class MessageService {
   searchAllChatMessages(id: string) {
     return this.messageRepo.find({
       where: [{ privateChat: { id } }, { publicChat: { id } }],
-      relations: ['owner', 'visualizedBy']
+      relations: {
+        owner: !0,
+        visualizedBy: !0
+      }
     });
   }
 
@@ -41,7 +44,10 @@ export class MessageService {
     return this.messageRepo.findOne({
       where: [{ privateChat: { id } }, { publicChat: { id } }],
       order: { createdAt: 'desc' },
-      relations: ['owner', 'visualizedBy']
+      relations: {
+        owner: !0,
+        visualizedBy: !0
+      }
     });
   }
 
@@ -51,18 +57,21 @@ export class MessageService {
       where: [
         {
           privateChat: { id },
-          visualizedBy: { sub: Not(sub) }
+          visualizedBy: Not(user)
         },
         {
           publicChat: { id },
-          visualizedBy: { sub: Not(sub) }
+          visualizedBy: Not(user)
         }
       ],
-      relations: ['visualizedBy']
+      relations: { visualizedBy: !0 }
     });
+
+    const messages = await this.searchAllChatMessages(id);
 
     // PRECISO DESCOBRIR COMO CONTAR AS NÃO VISUALIZADAS!!!!
     console.log(`O user "${user.email}" tem ${count} mensagens não lidas!`);
+    console.log(messages.map(({ id, visualizedBy }) => { return { id, visualizedBy } }));
 
     return count;
   }

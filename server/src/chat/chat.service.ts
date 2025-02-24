@@ -40,9 +40,10 @@ export class ChatService {
   searchPrivateChat(id: string, hasMessages: boolean = !1) {
     if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
 
-    const relations = ['users'];
-
-    hasMessages && relations.push('messages');
+    const relations = {
+      users: !0,
+      ...(hasMessages && { messages: !0 })
+    };
 
     return this.privateChatRepo.findOne({ where: { id }, relations });
   }
@@ -50,31 +51,43 @@ export class ChatService {
   searchPublicChat(id: string, hasMessages: boolean = !1) {
     if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
 
-    const relations = ['owner', 'users'];
-
-    hasMessages && relations.push('messages');
+    const relations = {
+      owner: !0,
+      users: !0,
+      ...(hasMessages && { messages: !0 })
+    };
 
     return this.publicChatRepo.findOne({ where: { id }, relations });
   }
 
   searchPrivateChatsByUser(sub: string) {
     return this.privateChatRepo.find({
-      where: { users: { sub } }, relations: ['users']
+      where: { users: { sub } }, relations: {
+        users: !0
+      }
     });
   }
 
   searchPublicChatsByUser(sub: string) {
     return this.publicChatRepo.find({
-      where: { users: { sub } }, relations: ['owner', 'users']
+      where: { users: { sub } }, relations: {
+        owner: !0,
+        users: !0
+      }
     });
   }
 
   searchPrivateChats() {
-    return this.privateChatRepo.find({ relations: ['users'] });
+    return this.privateChatRepo.find({ relations: {
+      users: !0
+    } });
   }
 
   searchPublicChats() {
-    return this.publicChatRepo.find({ relations: ['owner', 'users'] });
+    return this.publicChatRepo.find({ relations: {
+      owner: !0,
+      users: !0
+    } });
   }
 
   private isValidUUID(uuid: string): boolean {
