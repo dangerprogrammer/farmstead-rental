@@ -22,11 +22,9 @@ export class MessageGateway {
       users.map(async ({ sub }) => await this.search.searchConnectionsByUser(sub))
     )).flat();
     
-    const message = await this.message.createMessage(details);
+    await this.message.createMessage(details);
 
     const chatMessages = await this.search.searchAllChatMessages(id);
-
-    this.server.to(socket.id).emit('message-sent', message);
 
     for (const { socketId } of connections) this.server.to(socketId).emit('update-messages-chat', { chatId: id, messages: chatMessages });
   }

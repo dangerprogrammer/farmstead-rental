@@ -47,9 +47,6 @@ export class ChatsPage {
 
     this.authPage.setupConstructor(this, [
       {
-        ev: 'message-sent', listener: (message: Message) => this.onMessageSent(message)
-      },
-      {
         ev: 'update-messages-chat', listener: ({ chatId: chId }: { chatId: string }) => this.updateMessages(chId)
       }
     ]);
@@ -155,6 +152,6 @@ export class ChatsPage {
 
     this.pendingMessages.push(details);
 
-    this.auth.socket.emit('create-message', details);
+    this.auth.socket.emit('create-message', details, (message: Message) => this.onMessageSent(message));
   }
 }
