@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Router } from '@angular/router';
 import { GooglePayload, GoogleUser } from '../types';
@@ -90,9 +90,7 @@ export class AuthService {
 
   delete(onConfirm?: Function) {
     if (this.socket) {
-      this.socket.emit('delete-user', this.token);
-
-      this.socket.on('delete-confirm', async () => {
+      this.socket.emit('delete-user', this.token, async () => {
         onConfirm && await onConfirm();
 
         this.logout();
@@ -108,12 +106,18 @@ export class AuthService {
 
   public setupSocket() {
     if (this.socket) {
+      console.log('Dando setupSocket e socket já existia!');
       this.socket.removeAllListeners();
 
       this.socket.disconnect();
     };
 
     this.socket = io(`${environment.api}/socket`, { auth: { authorization: this.token } });
+
+    return new Promise((resolve: any, reject) => {
+      this.socket.on('connect', () => resolve());
+      this.socket.on('connect_error', () => reject());
+    });
   }
 
   socketEmitters = {}

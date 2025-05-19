@@ -1,9 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { GooglePayload, googleToken } from 'src/app/types';
 
 @Component({
   selector: 'app-login',

@@ -33,8 +33,6 @@ export class UserGateway {
 
     socket.broadcast.emit('deleted-user', user);
 
-    await this.user.deleteUser(user);
-
-    socket.emit('delete-confirm');
+    return await this.user.deleteUser(user);
   }
 }

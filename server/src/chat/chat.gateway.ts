@@ -18,17 +18,13 @@ export class ChatGateway {
   async createPrivateChat(socket: Socket, details: PrivateChat) {
     this.chat.setServer(this.server);
 
-    const privateChat = await this.chat.createPrivateChat(details);
-
-    this.server.to(socket.id).emit('confirm-private-chat', privateChat);
+    return await this.chat.createPrivateChat(details);
   }
 
   @SubscribeMessage('create-public-chat')
   async createPublicChat(socket: Socket, details: PublicChat) {
     this.chat.setServer(this.server);
 
-    const publicChat = await this.chat.createPublicChat(details);
-
-    this.server.to(socket.id).emit('confirm-public-chat', publicChat);
+    return await this.chat.createPublicChat(details);
   }
 }

@@ -39,7 +39,6 @@ export class HomePage {
       { ev: 'update-users', listener: () => this.loadUsers() },
       { ev: 'update-private-chats', listener: () => this.loadPrivateChats() },
       { ev: 'update-public-chats', listener: () => this.loadPublicChats() },
-      { ev: 'confirm-private-chat', listener: ({ id }: PrivateChat) => setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 5e2) }
     ]);
   }
 
@@ -56,9 +55,7 @@ export class HomePage {
   loadUsers() {
     this.search.users().subscribe(users => {
       if (users) {
-        this.authPage.defListeners.updateUsers(users);
-
-        users = this.context.getData('users');
+        users = this.authPage.defListeners.updateUsers(users);
 
         this.users = users;
 
@@ -71,9 +68,7 @@ export class HomePage {
     this.search.userByToken(this.auth.token).subscribe(googleSelf =>
       this.search.user(googleSelf.sub).subscribe(self => {
         if (self) {
-          this.authPage.defListeners.updateSelf(self);
-
-          this.self = this.context.getData<User>('self');
+          this.self = this.authPage.defListeners.updateSelf(self);
 
           const privateChats = this.context.getData<PrivateChat[] | undefined>('private-chats');
 
@@ -157,6 +152,9 @@ export class HomePage {
   startPrivateChat(user: User) {
     const privateChat: Partial<PrivateChat> = { users: [this.self!, user] };
 
-    this.auth.socket.emit('create-private-chat', privateChat);
+    this.auth.socket.emit('create-private-chat', privateChat,
+      () => this.forwardPrivateTalking()
+      // ({ id }: PrivateChat) => setTimeout(() => this.router.navigate(['/', 'home', 'chats', id]), 5e2)
+    );
   }
 }

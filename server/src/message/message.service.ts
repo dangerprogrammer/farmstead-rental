@@ -57,11 +57,15 @@ export class MessageService {
       where: [
         {
           privateChat: { id },
-          visualizedBy: Not(user)
+          visualizedBy: {
+            sub: Not(user.sub)
+          }
         },
         {
           publicChat: { id },
-          visualizedBy: Not(user)
+          visualizedBy: {
+            sub: Not(user.sub)
+          }
         }
       ],
       relations: { visualizedBy: !0 }

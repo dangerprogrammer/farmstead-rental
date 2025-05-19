@@ -36,7 +36,7 @@ export class UserService extends PassportSerializer {
     async validateUser(details: TokenPayload) {
         const user = await this.searchUser(details.sub);
 
-        if (user) return this.searchUser(details.sub);
+        if (user) return user;
 
         return await this.createUser(details);
     }

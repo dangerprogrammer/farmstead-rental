@@ -54,6 +54,10 @@
 	--ion-color-tint: var(--ion-color-main-tint);
 }
 
+.alert-button.ion-alert-confirm {
+  color: var(--ion-color-main);
+}
+
 .flex-center {
     display: flex;
 	flex-direction: column;
