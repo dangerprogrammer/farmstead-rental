@@ -1,4 +1,4 @@
-import { Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 import { User, Message } from ".";
 
 @Entity({ name: 'chats' })
@@ -29,4 +29,10 @@ export class PublicChat extends Chat {
 
     @ManyToOne(() => User, ({ publicChatsOwned }) => publicChatsOwned)
     owner: User;
+
+    @Column({ nullable: !0 })
+    photo?: string;
+
+    @Column()
+    title: string;
 }

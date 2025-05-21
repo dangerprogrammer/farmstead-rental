@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities';
 import { Repository } from 'typeorm';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { Server } from "socket.io";
+import { SearchService } from 'src/search/search.service';
 
 @Injectable()
 export class UserService extends PassportSerializer {
@@ -12,7 +13,8 @@ export class UserService extends PassportSerializer {
     server: Server;
 
     constructor(
-        @InjectRepository(User) private readonly userRepo: Repository<User>
+        @InjectRepository(User) private readonly userRepo: Repository<User>,
+        @Inject(forwardRef(() => SearchService)) private readonly search: SearchService
     ) {
         super();
 
@@ -36,7 +38,18 @@ export class UserService extends PassportSerializer {
     async validateUser(details: TokenPayload) {
         const user = await this.searchUser(details.sub);
 
-        if (user) return user;
+        if (user) {
+            if (!user.active) {
+                user.active = !0;
+
+                await this.userRepo.save(user);
+
+                this.server.emit('update-users', { users: await this.searchUsers(), reason: 'Usuário re-criado!' });
+                this.server.emit('update-private-chats', await this.search.searchPrivateChats());
+            };
+
+            return user;
+        };
 
         return await this.createUser(details);
     }
@@ -46,7 +59,7 @@ export class UserService extends PassportSerializer {
 
         await this.userRepo.save(user);
 
-        this.server.emit('update-users', await this.searchUsers());
+        this.server.emit('update-users', { users: await this.searchUsers(), reason: 'Usuário criado!' });
 
         return await this.searchUser(user.sub);
     }
@@ -56,15 +69,16 @@ export class UserService extends PassportSerializer {
 
         if (!user) return !1;
 
-        await this.userRepo.delete({ sub: details.sub });
+        await this.userRepo.save({ ...user, active: !1 });
 
-        this.server.emit('update-users', await this.searchUsers());
+        this.server.emit('update-users', { users: await this.searchUsers(), reason: 'Usuário deletado!' });
+        this.server.emit('update-private-chats', await this.search.searchPrivateChats());
 
-        return !0;
+        return user;
     }
 
     async login(token: string) {
-        const user = await this.searchUserByToken(token);
+        const user: TokenPayload = await this.searchUserByToken(token);
 
         if (!user) await this.createUser(user);
 
@@ -84,12 +98,12 @@ export class UserService extends PassportSerializer {
     async searchUserByToken(idToken: string) {
         try {
             const ticket = await this.client.verifyIdToken({
-              idToken, audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
+                idToken, audience: '51626388269-dk4eop0ri15rqb0alt66sgpv3iqf39q8.apps.googleusercontent.com',
             });
-        
+
             return ticket.getPayload();
         } catch (error) {
             return error;
         }
-      }
+    }
 }

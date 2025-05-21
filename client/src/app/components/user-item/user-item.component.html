@@ -1,7 +1,6 @@
 <ion-item (click)="sendClick()">
   <ng-container *ngIf="privateChat">
-    <ng-container *ngIf="privateChat.users.length == 1 &&
-    (privateChat.users[0]) as user">
+    <ng-container *ngIf="privateChat.users.length == 1 && (privateChat.users[0]) as user">
       <ion-avatar slot="start">
         <img [src]="user.picture" referrerpolicy="no-referrer" />
       </ion-avatar>
@@ -9,7 +8,8 @@
         <b>{{user.name}} (Você)</b>
         <p *ngIf="message" class="description-message">
           <ng-container *ngIf="message.owner.sub == sub">
-            <ion-icon *ngIf="(privateChat.users.length) as users" color="primary" aria-hidden="true" ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
+            <ion-icon *ngIf="(privateChat.users.length) as users" color="primary" aria-hidden="true"
+              ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
             <ion-text>{{message.content}}</ion-text>
           </ng-container>
           <ion-text *ngIf="message.owner.sub != sub">{{message.content}}</ion-text>
@@ -25,8 +25,13 @@
       <ion-label>
         <b>{{user.name}}</b>
         <p *ngIf="message" class="description-message">
-          <ion-icon *ngIf="message.owner.sub == sub && (privateChat.users) as users" [color]="message.visualizedBy.length == users.length ? 'primary' : 'medium'" aria-hidden="true" ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
+          <ion-icon *ngIf="message.owner.sub == sub && (privateChat.users) as users"
+            [color]="message.visualizedBy.length == users.length ? 'primary' : 'medium'" aria-hidden="true"
+            ios="checkmark-done-outline" md="checkmark-done-sharp"></ion-icon>
           <ion-text>{{message.content}}</ion-text>
+        </p>
+        <p *ngIf="!message && user.status" class="description-message">
+          <ion-text>{{user.status}}</ion-text>
         </p>
       </ion-label>
     </ng-container>

@@ -7,7 +7,12 @@ import { EntityModule } from 'src/entities/entity.module';
 import { ConnectionModule } from 'src/connection/connection.module';
 
 @Module({
-  imports: [PassportModule, forwardRef(() => SearchModule), forwardRef(() => ConnectionModule), EntityModule],
+  imports: [
+    PassportModule,
+    forwardRef(() => SearchModule),
+    forwardRef(() => ConnectionModule),
+    EntityModule
+  ],
   providers: [UserGateway, UserService],
   exports: [UserService]
 })

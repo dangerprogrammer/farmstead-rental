@@ -77,9 +77,7 @@ export class AuthService {
     if (this.token) (async () => {
       if (this.user) this.user = await GoogleAuth.signOut();
 
-      this.socket?.removeAllListeners();
-
-      this.socket?.disconnect();
+      this.socket.disconnect();
 
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("expiration");
@@ -93,30 +91,40 @@ export class AuthService {
       this.socket.emit('delete-user', this.token, async () => {
         onConfirm && await onConfirm();
 
-        this.logout();
+        await this.logout();
       });
     } else this.logout();
   }
 
   public logSocket(...text: any[]) {
-    const time = new Date().toLocaleString();
+    const date = new Date(), time = date.toLocaleString();
 
-    console.log(`%c[${time}]`, 'color: lightblue', ...text);
+    console.log(`%c[${time}.${date.getMilliseconds()}]`, 'color: lightblue', ...text);
   }
 
   public setupSocket() {
     if (this.socket) {
-      console.log('Dando setupSocket e socket já existia!');
-      this.socket.removeAllListeners();
-
+      this.logSocket('Dando setupSocket e socket já existia!');
       this.socket.disconnect();
     };
 
     this.socket = io(`${environment.api}/socket`, { auth: { authorization: this.token } });
 
     return new Promise((resolve: any, reject) => {
-      this.socket.on('connect', () => resolve());
+      this.socket.on('connect', () => {
+        resolve();
+        this.logSocket('setup socket finished!');
+      });
+
       this.socket.on('connect_error', () => reject());
+
+      this.socket.on('disconnect', async () => {
+        this.socket.removeAllListeners();
+
+        this.logSocket('Socket disconnected');
+
+        await this.logout();
+      });
     });
   }
 

@@ -13,5 +13,5 @@ export class Connection {
     user: User;
 
     @RelationId(({ user }: Connection) => user)
-    userSub: number;
+    userSub: string;
 }

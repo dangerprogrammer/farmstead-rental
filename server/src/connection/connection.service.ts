@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Connection } from "src/entities";
+import { Connection, User } from "src/entities";
 import { Repository } from "typeorm";
 import { Server } from "socket.io";
 import { SearchService } from "src/search/search.service";
@@ -11,6 +11,7 @@ export class ConnectionService {
 
     constructor(
         @InjectRepository(Connection) private readonly connectionRepo: Repository<Connection>,
+        @InjectRepository(User) private readonly userRepo: Repository<User>,
         @Inject(forwardRef(() => SearchService)) private readonly search: SearchService
     ) { }
 
@@ -23,13 +24,35 @@ export class ConnectionService {
 
         await this.connectionRepo.save(connection);
 
-        this.server.emit('update-users', await this.search.searchUsers());
+        const user = await this.search.searchUser(connection.userSub);
+
+        user.status = 'Online';
+
+        await this.userRepo.save(user);
+
+        this.server.emit('update-users', { users: await this.search.searchUsers(), reason: 'Conexão criada!' });
+        this.server.emit('update-private-chats', await this.search.searchPrivateChats());
 
         return await this.searchConnection(details.socketId);
     }
 
     async deleteBySocketId(socketId: string) {
+        const connection = await this.searchConnection(socketId);
+
         await this.connectionRepo.delete({ socketId });
+
+        const remainConnections = await this.searchConnectionsByUser(connection.userSub);
+
+        const user = await this.search.searchUser(connection.userSub);
+
+        const time = new Date().toLocaleString();
+
+        user.status = remainConnections.length ? 'Online' : `Visto por último em ${time}`;
+
+        await this.userRepo.save(user);
+
+        this.server.emit('update-users', { users: await this.search.searchUsers(), reason: 'Conexão removida!' });
+        this.server.emit('update-private-chats', await this.search.searchPrivateChats());
 
         return !0;
     }

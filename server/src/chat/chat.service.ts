@@ -37,6 +37,18 @@ export class ChatService {
     return await this.searchPublicChat(details.id);
   }
 
+  async unlinkUserFromPrivateChat(sub: string, id: string) {
+    if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
+
+    const privateChat = await this.searchPrivateChat(id);
+
+    privateChat.users = privateChat.users.filter(({ sub: uSub }) => uSub != sub);
+
+    await this.privateChatRepo.save(privateChat);
+
+    this.server.emit('update-private-chats', await this.searchPrivateChats());
+  }
+
   searchPrivateChat(id: string, hasMessages: boolean = !1) {
     if (!this.isValidUUID(id)) throw new NotFoundException('ID inválido');
 
@@ -61,11 +73,21 @@ export class ChatService {
   }
 
   searchPrivateChatsByUser(sub: string) {
-    return this.privateChatRepo.find({
-      where: { users: { sub } }, relations: {
-        users: !0
-      }
-    });
+    return this.privateChatRepo
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.users', 'user')
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('chat_sub.id')
+          .from(PrivateChat, 'chat_sub')
+          .leftJoin('chat_sub.users', 'user_sub')
+          .where('user_sub.sub = :sub')
+          .getQuery();
+        return 'chat.id IN ' + subQuery;
+      })
+      .setParameter('sub', sub)
+      .getMany();
   }
 
   searchPublicChatsByUser(sub: string) {
@@ -78,16 +100,20 @@ export class ChatService {
   }
 
   searchPrivateChats() {
-    return this.privateChatRepo.find({ relations: {
-      users: !0
-    } });
+    return this.privateChatRepo.find({
+      relations: {
+        users: !0
+      }
+    });
   }
 
   searchPublicChats() {
-    return this.publicChatRepo.find({ relations: {
-      owner: !0,
-      users: !0
-    } });
+    return this.publicChatRepo.find({
+      relations: {
+        owner: !0,
+        users: !0
+      }
+    });
   }
 
   private isValidUUID(uuid: string): boolean {

@@ -74,8 +74,8 @@ export class MessageService {
     const messages = await this.searchAllChatMessages(id);
 
     // PRECISO DESCOBRIR COMO CONTAR AS NÃO VISUALIZADAS!!!!
-    console.log(`O user "${user.email}" tem ${count} mensagens não lidas!`);
-    console.log(messages.map(({ id, visualizedBy }) => { return { id, visualizedBy } }));
+    // console.log(`O user "${user.email}" tem ${count} mensagens não lidas!`);
+    // console.log(messages.map(({ id, visualizedBy }) => { return { id, visualizedBy } }));
 
     return count;
   }

@@ -15,6 +15,12 @@ export class User {
     @Column()
     picture: string;
 
+    @Column({ default: !0 })
+    active: boolean;
+
+    @Column({ nullable: !0 })
+    status: string;
+
     @OneToMany(() => Connection, ({ user }) => user)
     connections: Connection[];
 

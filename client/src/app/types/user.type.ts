@@ -5,6 +5,8 @@ export type User = {
     email: string;
     name: string;
     picture: string;
+    active: boolean;
+    status?: string;
     connections: Connection[];
     privateChats: PrivateChat[];
     publicChats: PublicChat[];

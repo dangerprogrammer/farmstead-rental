@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { ModalController, PopoverController } from '@ionic/angular';
+import { forkJoin, map } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { ContextService } from 'src/app/services/context.service';
 import { SearchService } from 'src/app/services/search.service';
@@ -32,8 +32,7 @@ export class HomePage {
     @Inject('AUTH_SERVICE') private auth: AuthService,
     @Inject('SEARCH_SERVICE') private search: SearchService,
     @Inject('CONTEXT_SERVICE') private context: ContextService,
-    private authPage: AuthPage,
-    private router: Router
+    private authPage: AuthPage
   ) {
     this.authPage.setupConstructor(this, [
       { ev: 'update-users', listener: () => this.loadUsers() },
@@ -44,8 +43,6 @@ export class HomePage {
 
   ionViewWillEnter() {
     this.loadSelf();
-
-    this.loadUsers();
 
     this.loadPrivateChats();
 
@@ -58,8 +55,13 @@ export class HomePage {
         users = this.authPage.defListeners.updateUsers(users);
 
         this.users = users;
+        this.privateUsers = users;
 
         this.loadSelf();
+
+        const privateChats = this.context.getData<PrivateChat[] | undefined>('private-chats');
+
+        if (privateChats) this.privateUsers = this.filterPrivateUsers(users, privateChats);
       };
     });
   }
@@ -69,31 +71,6 @@ export class HomePage {
       this.search.user(googleSelf.sub).subscribe(self => {
         if (self) {
           this.self = this.authPage.defListeners.updateSelf(self);
-
-          const privateChats = this.context.getData<PrivateChat[] | undefined>('private-chats');
-
-          if (privateChats) {
-            this.selfPrivateChats = privateChats;
-
-            privateChats.forEach(({ id, users }) => users.forEach(({ email, sub }) =>
-              this.search.unreadMessagesByUser(id, sub).subscribe(total => {
-                console.log(`Mensagens não lidas por ${email}`, total);
-              })
-            ));
-          };
-
-          const publicChats = this.context.getData<PublicChat[] | undefined>('public-chats');
-
-          if (publicChats) this.selfPublicChats = publicChats;
-
-          const users = this.context.getData<User[] | undefined>('users');
-
-          if (users) {
-            this.users = users;
-            this.privateUsers = users;
-
-            if (privateChats) this.privateUsers = this.filterPrivateUsers(users, privateChats);
-          };
         };
       })
     );
@@ -102,11 +79,22 @@ export class HomePage {
   loadPrivateChats() {
     this.search.privateChats().subscribe(privateChats => {
       if (privateChats) {
-        this.authPage.defListeners.updatePrivateChats(privateChats);
-
-        privateChats = this.context.getData('private-chats');
+        privateChats = this.authPage.defListeners.updatePrivateChats(privateChats);
 
         this.selfPrivateChats = privateChats;
+
+        forkJoin((privateChats.map(({ id, users }) =>
+          users.map(({ email, sub }) =>
+            this.search.unreadMessagesByUser(id, sub).pipe(map(total => ({ total, email })))
+          )
+        )).flat()).subscribe(messages => {
+          const date = new Date();
+          console.groupCollapsed(`%c[${date.toLocaleString()}.${date.getMilliseconds()}] UNREAD-MESSAGES`, 'color: lightblue');
+
+          messages.forEach(({ total, email }) => console.log(`Mensagens não lidas por ${email}`, total));
+
+          console.groupEnd();
+        });
 
         this.forwardPrivateTalking();
 
@@ -127,9 +115,7 @@ export class HomePage {
   loadPublicChats() {
     this.search.publicChats().subscribe(publicChats => {
       if (publicChats) {
-        this.authPage.defListeners.updatePublicChats(publicChats);
-
-        publicChats = this.context.getData('public-chats');
+        publicChats = this.authPage.defListeners.updatePublicChats(publicChats);
 
         this.selfPublicChats = publicChats;
       };

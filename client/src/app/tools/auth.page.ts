@@ -59,10 +59,10 @@ export class AuthPage {
 
   private initToolListeners: constructorListener[] = [
     {
-      ev: 'update-users', listener: (users: User[]) => {
+      ev: 'update-users', listener: ({ users, reason }: { users: User[], reason: string }) => {
         this.defListeners.updateUsers(users);
 
-        // this.auth.logSocket('update users', users);
+        this.auth.logSocket(users, reason);
       }
     },
     {
@@ -104,7 +104,7 @@ export class AuthPage {
 
     const expired = expiration - new Date().getTime() / 1e3;
 
-    this.auth.logSocket(`Expiration: ${expiration}\nExpired: ${expired}`);
+    this.auth.logSocket(`Expired: ${expired}`);
 
     if (expired <= 0) {
       const alertDisconnect = await this.alert.create({
@@ -126,32 +126,28 @@ export class AuthPage {
 
     const { socket } = this.auth;
 
-    socket.on('disconnect', async () => {
-      socket.removeAllListeners();
-
-      await this.auth.logout();
-    });
-
     this.initToolListeners.forEach(({ ev, listener }) => {
+      const pageListener = this.listeners.find(({ ev: listenerEv }) => ev == listenerEv);
+
+      if (pageListener) pageListener.listened = !0;
+
       socket.on(ev, (...args: any[]) => {
         listener(...args);
 
-        const pageListener = this.listeners.find(({ ev: listenerEv }) => ev == listenerEv);
-
         if (pageListener) {
-          this.auth.logSocket(`O listener default "${ev}" foi encontrado na página`);
+          // this.auth.logSocket(`Listener "${ev}" ouvido!`);
           pageListener.listener(...args);
-
-          pageListener.listened = !0;
         };
       });
     });
 
-    this.listeners.filter(({ listened }) => !listened).forEach(({ page, ev, listener }) => {
+    this.listeners.filter(({ listened }) => !listened).forEach(({ ev, listener }) => {
       const { socket } = this.auth;
 
-      this.auth.logSocket(`O listener default "${ev}" NÃO foi encontrado na página`);
-      socket.on(ev, listener);
+      socket.on(ev, (...args: any[]) => {
+        // this.auth.logSocket(`Listener "${ev}" ouvido!`);
+        listener(...args);
+      });
     });
 
     this.context.setData('auth-token', this.auth.token);

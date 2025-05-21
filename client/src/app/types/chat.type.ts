@@ -3,6 +3,8 @@ import { User } from ".";
 
 type Chat = {
     id: string;
+    photo?: string;
+    title?: string;
 }
 
 export type PrivateChat = Chat & {
@@ -10,6 +12,8 @@ export type PrivateChat = Chat & {
     messages: Message[];
 }
 
-export type PublicChat = PrivateChat & {
+export type PublicChat = Chat & {
+    users: User[];
+    messages: Message[];
     owner: User;
 }

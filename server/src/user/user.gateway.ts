@@ -31,8 +31,6 @@ export class UserGateway {
       for (const { socketId } of connections) await this.connect.deleteBySocketId(socketId);
     })();
 
-    socket.broadcast.emit('deleted-user', user);
-
     return await this.user.deleteUser(user);
   }
 }
