@@ -36,6 +36,7 @@ export class HomePage {
   ) {
     this.authPage.setupConstructor(this, [
       { ev: 'update-users', listener: () => this.loadUsers() },
+      { ev: 'update-user', listener: ({ user }: { user: User }) => this.updateUser(user) },
       { ev: 'update-private-chats', listener: () => this.loadPrivateChats() },
       { ev: 'update-public-chats', listener: () => this.loadPublicChats() },
     ]);
@@ -74,6 +75,25 @@ export class HomePage {
         };
       })
     );
+  }
+
+  updateUser(user: User) {
+    if (this.users) {
+      console.log('update-user');
+
+      const users = this.authPage.defListeners.updateUsers(this.users.map((u) => {
+        if (u.sub == user.sub) return user;
+
+        return u;
+      }));
+
+      this.users = users;
+      this.privateUsers = users;
+
+      if (user.sub == this.self.sub) this.self = this.authPage.defListeners.updateSelf(user);
+
+      this.loadPrivateChats();
+    };
   }
 
   loadPrivateChats() {

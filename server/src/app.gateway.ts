@@ -30,8 +30,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         await this.connect.create({ socketId: socket.id, user });
 
         // this.logSocket({ msg: `${bold(details.email)} connected!` });
-
-        this.server.to(socket.id).emit('self', await this.search.searchUser(user.sub));
     }
 
     async handleDisconnect(socket: Socket) {

@@ -30,8 +30,7 @@ export class ConnectionService {
 
         await this.userRepo.save(user);
 
-        this.server.emit('update-users', { users: await this.search.searchUsers(), reason: 'Conexão criada!' });
-        this.server.emit('update-private-chats', await this.search.searchPrivateChats());
+        this.server.emit('update-user', { user: user });
 
         return await this.searchConnection(details.socketId);
     }
@@ -51,8 +50,7 @@ export class ConnectionService {
 
         await this.userRepo.save(user);
 
-        this.server.emit('update-users', { users: await this.search.searchUsers(), reason: 'Conexão removida!' });
-        this.server.emit('update-private-chats', await this.search.searchPrivateChats());
+        this.server.emit('update-user', { user: user });
 
         return !0;
     }

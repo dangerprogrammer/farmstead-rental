@@ -44,8 +44,7 @@ export class UserService extends PassportSerializer {
 
                 await this.userRepo.save(user);
 
-                this.server.emit('update-users', { users: await this.searchUsers(), reason: 'Usuário re-criado!' });
-                this.server.emit('update-private-chats', await this.search.searchPrivateChats());
+                this.server.emit('update-user', { user: user });
             };
 
             return user;
@@ -71,8 +70,7 @@ export class UserService extends PassportSerializer {
 
         await this.userRepo.save({ ...user, active: !1 });
 
-        this.server.emit('update-users', { users: await this.searchUsers(), reason: 'Usuário deletado!' });
-        this.server.emit('update-private-chats', await this.search.searchPrivateChats());
+        this.server.emit('update-user', { user: user });
 
         return user;
     }
