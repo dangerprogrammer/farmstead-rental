@@ -97,6 +97,8 @@ export class ChatsPage {
   onMessageSent(message: Message) {
     const pendingIndex = this.pendingMessages.findIndex(pMessage => (message.sendAt as any as string) == pMessage.sendAt.toISOString())
 
+    console.log('message-sent!', this.pendingMessages, message);
+
     this.pendingMessages.splice(pendingIndex, 1);
   }
 

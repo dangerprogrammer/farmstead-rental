@@ -22,11 +22,13 @@ export class MessageGateway {
       users.map(async ({ sub }) => await this.search.searchConnectionsByUser(sub))
     )).flat();
     
-    await this.message.createMessage(details);
+    const message = await this.message.createMessage(details);
 
     const chatMessages = await this.search.searchAllChatMessages(id);
 
     for (const { socketId } of connections) this.server.to(socketId).emit('update-messages-chat', { chatId: id, messages: chatMessages });
+
+    return message;
   }
 
   @SubscribeMessage('visualize-message')
